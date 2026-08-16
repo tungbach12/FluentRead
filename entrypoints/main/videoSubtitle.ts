@@ -33,9 +33,9 @@ const YOUTUBE_MOBILE_HOST_PATTERN = /(^|\.)youtube-nocookie\.com$/i;
 const YOUTUBE_TIMED_TEXT_MESSAGE = 'fluent-read-youtube-timedtext';
 
 const VIDEO_DISPLAY_MODE_LABELS: Record<VideoSubtitleDisplayMode, string> = {
-  bilingual: '双语',
-  'translation-only': '仅译文',
-  'original-only': '仅原文',
+  bilingual: 'Bilingual',
+  'translation-only': 'Translation only',
+  'original-only': 'Original only',
 };
 
 const VIDEO_CAPTION_EMPTY_GRACE_MS = 420;
@@ -125,7 +125,7 @@ function isOriginalTimedTextUrl(url: string): boolean {
 
 function downloadSubtitleSrt(cues: VideoSubtitleCue[], languageCode: string): void {
   const srt = cuesToSrt(cues);
-  if (!srt.trim()) throw new Error('字幕轨道没有可下载的内容');
+  if (!srt.trim()) throw new Error('Subtitle track has no downloadable content');
 
   const title = sanitizeSubtitleFilename(document.title.replace(/\s*-\s*YouTube\s*$/i, ''));
   const language = sanitizeSubtitleFilename(languageCode || 'original');
@@ -219,7 +219,7 @@ function getOrCreateTranslationOverlay(player: HTMLElement): HTMLElement {
   overlay.setAttribute('data-fluent-read-ui', 'video-subtitle');
   overlay.setAttribute('translate', 'no');
   overlay.setAttribute('aria-live', 'polite');
-  overlay.setAttribute('aria-label', 'FluentRead 视频字幕译文');
+  overlay.setAttribute('aria-label', 'FluentRead video subtitle translation');
   layer.appendChild(overlay);
   return overlay;
 }
@@ -795,7 +795,7 @@ export function mountVideoSubtitleTranslation(): () => void {
     const request = (async () => {
       try {
         const response = await fetch(url, { credentials: 'include' });
-        if (!response.ok) throw new Error(`字幕轨道请求失败（${response.status}）`);
+        if (!response.ok) throw new Error(`Failed to fetch subtitle track (${response.status})`);
         const cues = finalizeVideoSubtitleCues(parseYoutubeTimedTextResponse(await response.text()));
         if (cues.length === 0) {
           pretranslationTrackRetryAt = Date.now() + 5000;
@@ -872,14 +872,14 @@ export function mountVideoSubtitleTranslation(): () => void {
     const mode = normalizeVideoSubtitleDisplayMode(config.videoSubtitleDisplayMode);
     const visible = config.videoSubtitleVisible !== false;
     const status = config.on
-      ? (config.videoTranslationEnabled ? '已开启' : '已关闭')
-      : 'FluentRead 总开关已关闭';
+      ? (config.videoTranslationEnabled ? 'On' : 'Off')
+      : 'FluentRead master switch is off';
 
     button.classList.toggle(VIDEO_TRANSLATION_ACTIVE_CLASS, enabled);
     button.setAttribute('aria-pressed', String(enabled));
     button.setAttribute('aria-expanded', String(!menu.hidden));
-    button.setAttribute('aria-label', `FluentRead 字幕翻译：${status}`);
-    button.title = `FluentRead 字幕翻译：${status}`;
+    button.setAttribute('aria-label', `FluentRead subtitle translation: ${status}`);
+    button.title = `FluentRead subtitle translation: ${status}`;
 
     const toggle = menu.querySelector<HTMLButtonElement>('[data-action="toggle-translation"]');
     if (toggle) {
@@ -894,7 +894,7 @@ export function mountVideoSubtitleTranslation(): () => void {
     if (visibility) {
       visibility.setAttribute('aria-checked', String(visible));
       visibility.querySelector<HTMLElement>('[data-check]')!.textContent = visible ? '✓' : '';
-      visibility.querySelector<HTMLElement>('[data-state]')!.textContent = visible ? '显示中' : '已隐藏';
+      visibility.querySelector<HTMLElement>('[data-state]')!.textContent = visible ? 'Showing' : 'Hidden';
     }
     menu.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((item) => {
       const selected = item.dataset.mode === mode;
@@ -946,12 +946,12 @@ export function mountVideoSubtitleTranslation(): () => void {
     }
 
     const track = chooseYoutubeCaptionTrack(extractYoutubeCaptionTracks(document), config.from);
-    if (!track) throw new Error('当前视频没有可用的 YouTube 字幕轨道');
+    if (!track) throw new Error('No YouTube subtitle track available for this video');
     const response = await fetch(buildYoutubeTimedTextUrl(track), { credentials: 'include' });
-    if (!response.ok) throw new Error(`字幕轨道请求失败（${response.status}）`);
+    if (!response.ok) throw new Error(`Failed to fetch subtitle track (${response.status})`);
     const cues = finalizeVideoSubtitleCues(parseYoutubeTimedTextResponse(await response.text()));
     if (cues.length === 0) {
-      throw new Error('YouTube 未返回完整字幕数据，请先打开原生字幕后重试');
+      throw new Error('YouTube did not return complete subtitle data. Please turn on native captions first and retry.');
     }
     return { languageCode: track.languageCode, cues };
   };
@@ -979,13 +979,13 @@ export function mountVideoSubtitleTranslation(): () => void {
       const downloadButton = target as HTMLButtonElement;
       const state = downloadButton.querySelector<HTMLElement>('[data-state]');
       downloadButton.disabled = true;
-      if (state) state.textContent = '准备中';
+      if (state) state.textContent = 'Preparing';
       try {
         const result = await resolveDownloadTrack();
         downloadSubtitleSrt(result.cues, result.languageCode);
-        if (state) state.textContent = `已下载 ${result.cues.length} 条`;
+        if (state) state.textContent = `Downloaded ${result.cues.length} cue(s)`;
       } catch (error) {
-        if (state) state.textContent = '暂不可用';
+        if (state) state.textContent = 'Unavailable';
         console.warn('[FluentRead] 字幕下载失败', error);
       } finally {
         window.setTimeout(() => {
@@ -1026,7 +1026,7 @@ export function mountVideoSubtitleTranslation(): () => void {
     menu.className = 'fluent-read-video-subtitle-menu fluent-read-video-ui notranslate';
     menu.hidden = true;
     menu.setAttribute('role', 'menu');
-    menu.setAttribute('aria-label', '流畅阅读视频字幕翻译菜单');
+    menu.setAttribute('aria-label', 'FluentRead video subtitle translation menu');
     markVideoUi(menu);
 
     const title = document.createElement('div');
@@ -1034,17 +1034,17 @@ export function mountVideoSubtitleTranslation(): () => void {
     const heading = document.createElement('span');
     heading.className = 'fluent-read-video-menu-heading';
     heading.append(
-      createTextElement('span', 'fluent-read-video-menu-brand', '流畅阅读'),
-      createTextElement('span', 'fluent-read-video-menu-title-text', '视频字幕翻译'),
+      createTextElement('span', 'fluent-read-video-menu-brand', 'FluentRead'),
+      createTextElement('span', 'fluent-read-video-menu-title-text', 'Video subtitle translation'),
     );
     title.append(
       heading,
-      createTextElement('span', 'fluent-read-video-menu-beta', 'Beta 测试'),
+      createTextElement('span', 'fluent-read-video-menu-beta', 'Beta'),
     );
     menu.appendChild(title);
 
-    menu.appendChild(createMenuItem('toggle-translation', '开启字幕翻译'));
-    const serviceCaption = createTextElement('span', 'fluent-read-video-menu-caption', '翻译服务');
+    menu.appendChild(createMenuItem('toggle-translation', 'Enable subtitle translation'));
+    const serviceCaption = createTextElement('span', 'fluent-read-video-menu-caption', 'Translation service');
     const serviceValue = createTextElement('span', 'fluent-read-video-menu-value', '');
     serviceValue.dataset.serviceLabel = 'true';
     serviceCaption.append('：', serviceValue);
@@ -1054,12 +1054,12 @@ export function mountVideoSubtitleTranslation(): () => void {
     divider.setAttribute('aria-hidden', 'true');
     menu.appendChild(divider);
 
-    const modeCaption = createTextElement('span', 'fluent-read-video-menu-caption', '字幕显示模式');
+    const modeCaption = createTextElement('span', 'fluent-read-video-menu-caption', 'Subtitle display mode');
     menu.appendChild(modeCaption);
     const modeGroup = document.createElement('div');
     modeGroup.className = 'fluent-read-video-menu-mode-group';
     modeGroup.setAttribute('role', 'radiogroup');
-    modeGroup.setAttribute('aria-label', '字幕显示模式');
+    modeGroup.setAttribute('aria-label', 'Subtitle display mode');
     (Object.keys(VIDEO_DISPLAY_MODE_LABELS) as VideoSubtitleDisplayMode[]).forEach((mode) => {
       const item = createTextElement('button', 'fluent-read-video-menu-mode', VIDEO_DISPLAY_MODE_LABELS[mode]);
       item.type = 'button';
@@ -1069,11 +1069,11 @@ export function mountVideoSubtitleTranslation(): () => void {
     });
     menu.appendChild(modeGroup);
 
-    menu.appendChild(createMenuItem('toggle-visible', '显示字幕'));
-    const download = createMenuItem('download-subtitles', '下载字幕');
+    menu.appendChild(createMenuItem('toggle-visible', 'Show subtitles'));
+    const download = createMenuItem('download-subtitles', 'Download subtitles');
     download.querySelector('[data-check]')?.remove();
     menu.appendChild(download);
-    const settings = createMenuItem('open-settings', '打开视频翻译设置');
+    const settings = createMenuItem('open-settings', 'Open video translation settings');
     settings.querySelector('[data-check]')?.remove();
     settings.querySelector('[data-state]')?.remove();
     menu.appendChild(settings);
@@ -1115,8 +1115,8 @@ export function mountVideoSubtitleTranslation(): () => void {
     button.setAttribute('role', 'button');
     button.setAttribute('aria-pressed', 'false');
     button.setAttribute('aria-expanded', 'false');
-    button.setAttribute('aria-label', 'FluentRead 字幕翻译：已关闭');
-    button.title = 'FluentRead 字幕翻译：已关闭';
+    button.setAttribute('aria-label', 'FluentRead subtitle translation: off');
+    button.title = 'FluentRead subtitle translation: off';
     const icon = document.createElement('img');
     icon.className = 'fluent-read-video-subtitle-button-icon';
     icon.src = browser.runtime.getURL('icon/128.png');

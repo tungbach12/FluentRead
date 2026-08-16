@@ -32,7 +32,7 @@ export function mountNewApiComponent() {
     const maskedKey = apiKey ? apiKey.slice(0, 3) + '***' + apiKey.slice(-3) : '(空)';
 
     const confirmed = window.confirm(
-      `检测到 New API 配置：\n- 接口地址: ${baseUrl || '(空)'}\n- API Key: ${maskedKey}\n- 模型: ${model || '(空)'}\n\n是否应用该配置并切换到 New API？`
+      `New API configuration detected:\n- Endpoint: ${baseUrl || '(empty)'}\n- API Key: ${maskedKey}\n- Model: ${model || '(empty)'}\n\nApply this configuration and switch to New API?`
     );
     if (!confirmed) return;
 

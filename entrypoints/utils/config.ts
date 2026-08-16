@@ -49,7 +49,8 @@ let pendingHistorySnapshot: Config | null = null;
 let pendingHistoryTimer: ReturnType<typeof setTimeout> | undefined;
 let historyFlushPromise: Promise<void> | null = null;
 
-// 所有运行时模块共享同一个可变配置对象；存储层负责把跨上下文变更同步进来。
+// All runtime modules share the same mutable config object; the storage layer
+// syncs cross-context changes into it.
 export const config = new Config();
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -205,7 +206,7 @@ async function initializeConfigHistory(): Promise<void> {
     } catch (error) {
         historyInitialized = true;
         setHistoryState(createBaselineHistory(), false);
-        console.error('[FluentRead] 配置历史读取失败，使用当前配置快照', error);
+        console.error('[FluentRead] Failed to read config history, falling back to the current config snapshot', error);
     }
 }
 
@@ -244,7 +245,7 @@ function flushHistorySnapshot(snapshot: Config): void {
     historyFlushPromise = appendHistorySnapshotNow(snapshot).finally(() => {
         historyFlushPromise = null;
     });
-    void historyFlushPromise.catch((error) => console.error('[FluentRead] 配置历史保存失败', error));
+    void historyFlushPromise.catch((error) => console.error('[FluentRead] Failed to save config history', error));
 }
 
 function scheduleHistorySnapshot(value: unknown): void {
@@ -276,7 +277,8 @@ function queueStorageWrite(nextConfig: Config, serialized: string, revision: num
     writeQueue = writeQueue
         .catch(() => undefined)
         .then(async () => {
-            // 只写最后一次快照，避免连续输入或多个页面初始化时排队回写旧配置。
+            // Write only the latest snapshot to avoid queueing stale config writes
+            // during rapid input or multiple page initializations.
             if (revision !== writeRevision || lastPersistedSerialized !== serialized) return;
             try {
                 await storage.setItem<Config>(CONFIG_STORAGE_KEY, {
@@ -310,18 +312,20 @@ function handleStoredConfigChange(value: unknown): void {
     const storedRevision = getStoredRevision(parsed);
     if (storedRevision && storedRevision < persistedConfigRevision) return;
     if (storedRevision) persistedConfigRevision = storedRevision;
-    // 同一个短生命周期页面可能在极短时间内产生多个快照。storage.watch
-    // 可能先回传前一个快照，不能让它覆盖页面尚未完成发送的最新快照。
+    // A short-lived page may produce several snapshots in quick succession.
+    // storage.watch may deliver an older snapshot first; it must not overwrite
+    // the newest snapshot the page has not yet finished sending.
     if (latestRequestedSerialized && serialized !== latestRequestedSerialized) return;
     if (serialized === lastPersistedSerialized) return;
 
-    // 外部上下文已经产生了新快照，使尚未写入的旧快照失效。
+    // An external context produced a newer snapshot, invalidating the pending one.
     writeRevision += 1;
     lastPersistedSerialized = serialized;
     applyConfig(normalized);
 }
 
-// 在首次读取前注册监听，避免设置页打开期间丢失其他上下文的更新。
+// Register listeners before the first read so updates from other contexts are
+// not missed while the settings page is open.
 storage.watch(CONFIG_STORAGE_KEY, handleStoredConfigChange);
 storage.watch(CONFIG_HISTORY_STORAGE_KEY, handleStoredHistoryChange);
 
@@ -329,7 +333,8 @@ async function initializeConfig(): Promise<void> {
     try {
         let storedValue: unknown = null;
 
-        // 读取过程中若收到 storage.onChanged，重新读取一次，避免旧读结果覆盖新配置。
+        // If storage.onChanged fires mid-read, read again so a stale read result
+        // cannot overwrite the newer config.
         for (let attempt = 0; attempt < 2; attempt += 1) {
             const revisionAtRead = storageRevision;
             storedValue = await storage.getItem<unknown>(CONFIG_STORAGE_KEY);
@@ -344,7 +349,8 @@ async function initializeConfig(): Promise<void> {
         initialized = true;
         applyConfig(normalized);
 
-        // 兼容旧版 JSON 字符串、缺失字段和模型迁移；迁移只在初始化时写回一次。
+        // Handles legacy JSON strings, missing fields, and model migrations;
+        // migration is written back only once at initialization.
         const storedSerialized = isRecord(storedValue) ? serializeConfig(storedValue) : '';
         if (!parsed || typeof storedValue === 'string' || storedSerialized !== serialized) {
             lastPersistedSerialized = '';
@@ -353,8 +359,9 @@ async function initializeConfig(): Promise<void> {
             lastPersistedSerialized = serialized;
         }
     } catch (error) {
-        // 存储 API 暂时不可用时仍提供默认配置，避免 Firefox 设置页因初始化 rejection 反复重载。
-        console.error('[FluentRead] 配置读取失败，使用默认配置', error);
+        // Provide a default config even if the storage API is temporarily
+        // unavailable, so the Firefox settings page does not reload on rejection.
+        console.error('[FluentRead] Failed to read config, using default config', error);
         const fallback = new Config();
         const serialized = serializeConfig(fallback);
         initialized = true;
@@ -363,7 +370,7 @@ async function initializeConfig(): Promise<void> {
         try {
             await persistNormalizedConfig(fallback, serialized);
         } catch (saveError) {
-            console.error('[FluentRead] 默认配置保存失败', saveError);
+            console.error('[FluentRead] Failed to save default config', saveError);
         }
     }
 }
@@ -392,8 +399,10 @@ export function subscribeConfigHistory(listener: ConfigHistoryListener): () => v
 }
 
 /**
- * 配置唯一写入口。调用方可以传入编辑中的快照，也可以省略参数保存运行时配置。
- * 写入前会归一化、去重，并串行淘汰旧快照，避免设置页和 popup 互相回灌。
+ * The only write entry point for the config. Callers can pass a snapshot being
+ * edited or omit the argument to save the runtime config. Before writing, the
+ * value is normalized and deduplicated, and older snapshots are retired serially
+ * so the settings page and popup never overwrite each other.
  */
 export interface SaveConfigOptions {
     recordHistory?: boolean;
@@ -418,8 +427,9 @@ export async function saveConfig(value: unknown = config, options: SaveConfigOpt
 }
 
 /**
- * 从 popup/options 等短生命周期页面请求后台保存配置。
- * Firefox 可能在 popup 关闭时销毁页面上下文，不能依赖页面内的异步 storage.set 完成。
+ * Request that the background save the config from short-lived pages such as
+ * popup/options. Firefox may destroy the page context when the popup closes, so
+ * an in-page async storage.set cannot be relied on.
  */
 type ConfigMessageResponse = { success?: boolean; error?: string } | undefined;
 type ConfigMessageSender = (message: {
@@ -449,14 +459,16 @@ export async function requestConfigSave(value: unknown = config, sendMessage?: C
             });
 
             if (response?.success === false) {
-                throw new Error(response.error || '后台保存配置失败');
+                throw new Error(response.error || 'Failed to save config in background');
             }
         } catch (error) {
-            // 页面端不排队等待上一条请求，确保 Firefox 关闭短生命周期页面前每条快照都已发往后台。
-            // 后台负责串行落盘；这里只保留后台不可用时的降级路径。
+            // The page does not queue behind the previous request, ensuring every
+            // snapshot is delivered to the background before Firefox closes the
+            // short-lived page. The background persists them serially; this is
+            // only a fallback path when the background is unavailable.
             await saveConfig(normalized, {recordHistory: true, immediateHistory: true});
             if (error instanceof Error && !error.message.includes('Receiving end')) {
-                console.warn('[FluentRead] 后台保存配置失败，已回退到当前上下文', error);
+                console.warn('[FluentRead] Failed to save config in background, fell back to the current context', error);
             }
         }
     } finally {
@@ -505,12 +517,12 @@ export async function requestConfigHistoryAction(
 
     try {
         const response = await sendMessage({type: CONFIG_HISTORY_MESSAGE, action, version});
-        if (response?.success === false) throw new Error(response.error || '配置历史操作失败');
+        if (response?.success === false) throw new Error(response.error || 'Config history operation failed');
         return response?.history || getConfigHistorySnapshot();
     } catch (error) {
         const history = await applyConfigHistoryAction(action, version);
         if (error instanceof Error && !error.message.includes('Receiving end')) {
-            console.warn('[FluentRead] 后台配置历史操作失败，已回退到当前上下文', error);
+            console.warn('[FluentRead] Background config history operation failed, fell back to the current context', error);
         }
         return history;
     }

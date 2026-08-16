@@ -196,7 +196,7 @@ function markFailedTranslation(
         discardTranslation(node, attempt.state);
         return;
     }
-    insertFailedTip(node, error instanceof Error ? error.message : String(error || "翻译失败"), spinner);
+    insertFailedTip(node, error instanceof Error ? error.message : String(error || "Translation failed"), spinner);
 }
 
 async function renderTranslation(

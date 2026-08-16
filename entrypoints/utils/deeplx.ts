@@ -6,19 +6,19 @@ export const DEFAULT_DEEPLX_ENDPOINT = "https://deeplx.1stg.me/translate"
 
 export const DEEPLX_ENDPOINT_PRESETS = [
   {
-    label: "1stG 公共站点（免 Key，已验证）",
+    label: "1stG public site (keyless, verified)",
     url: DEFAULT_DEEPLX_ENDPOINT,
   },
   {
-    label: "Fanyimao 公共站点（需站点 Token，已验证）",
+    label: "Fanyimao public site (requires site token, verified)",
     url: "https://freeapi.fanyimao.cn/translate?token={{apiKey}}",
   },
   {
-    label: "DeepLX 社区站点（需个人 Token）",
+    label: "DeepLX community site (requires personal token)",
     url: "https://api.deeplx.org/{{apiKey}}/translate",
   },
   {
-    label: "本地 DeepLX（需自行运行）",
+    label: "Local DeepLX (self-hosted)",
     url: "http://localhost:1188/translate",
   },
 ] as const

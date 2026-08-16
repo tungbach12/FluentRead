@@ -23,7 +23,7 @@ async function claude(message: any) {
         });
 
         if (!resp.ok) {
-            throw new Error(`请求失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+            throw new Error(`Request failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
         }
 
         const result = await resp.json();

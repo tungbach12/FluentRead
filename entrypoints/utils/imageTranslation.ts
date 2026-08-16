@@ -145,8 +145,8 @@ function createState(image: HTMLImageElement): ImageTranslationState {
     button.type = 'button';
     button.className = IMAGE_TRANSLATION_BUTTON;
     button.textContent = '文';
-    button.title = '翻译图片';
-    button.setAttribute('aria-label', '翻译图片');
+    button.title = 'Translate image';
+    button.setAttribute('aria-label', 'Translate image');
     button.addEventListener('pointerenter', event => event.stopPropagation());
     button.addEventListener('pointerdown', event => {
         event.preventDefault();
@@ -222,7 +222,7 @@ function hideImageButton(image: HTMLImageElement): void {
 async function getImageData(image: HTMLImageElement): Promise<string> {
     const width = image.naturalWidth;
     const height = image.naturalHeight;
-    if (!width || !height) throw new Error('图片尚未加载完成');
+    if (!width || !height) throw new Error('Image has not finished loading');
 
     const canvas = document.createElement('canvas');
     canvas.width = width;

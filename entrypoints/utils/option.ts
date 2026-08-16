@@ -1,7 +1,7 @@
 import {DEFAULT_DEEPLX_ENDPOINT} from "./deeplx";
 
 export const services = {
-    // 机器翻译
+    // Machine translation
     microsoft: "microsoft",
     freeTranslation: "freeTranslation",
     deepL: "deepL",
@@ -9,9 +9,9 @@ export const services = {
     google: "google",
     xiaoniu: "xiaoniu",
     youdao: "youdao",
-    tencent: "tencent", // 腾讯云机器翻译
-    chromeTranslator: "chromeTranslator", // Chrome 内置翻译 API
-    // 大模型翻译
+    tencent: "tencent", // Tencent Cloud machine translation
+    chromeTranslator: "chromeTranslator", // Chrome built-in translation API
+    // AI model translation
     openai: "openai",
     azureOpenai: "azureOpenai", // Azure OpenAI
     gemini: "gemini",
@@ -27,21 +27,21 @@ export const services = {
     lingyi: "lingyi",
     deepseek: "deepseek",
     minimax: "minimax",
-    jieyue: "jieyue", // 阶跃星辰
+    jieyue: "jieyue", // StepFun
     groq: "groq",
-    cozecom: "cozecom", // coze 支持机器人不支持模型
+    cozecom: "cozecom", // Coze supports bots, not models
     cozecn: "cozecn",
-    huanYuan: "huanYuan", // 腾讯混元
-    huanYuanTranslation: "huanYuanTranslation", // 腾讯混元翻译大模型
-    doubao: "doubao", // 字节豆包
-    siliconCloud: "siliconCloud", // 硅流
-    openrouter: "openrouter", // openrouter
-    grok: "grok", // X.AI 的 Grok
-    newapi: "newapi", // New API 接口
+    huanYuan: "huanYuan", // Tencent Hunyuan
+    huanYuanTranslation: "huanYuanTranslation", // Tencent Hunyuan translation LLM
+    doubao: "doubao", // ByteDance Doubao
+    siliconCloud: "siliconCloud", // SiliconFlow
+    openrouter: "openrouter", // OpenRouter
+    grok: "grok", // X.AI Grok
+    newapi: "newapi", // New API
 };
 
 export const servicesType = {
-    // 阵营划分
+    // Service categories
     machine: new Set([services.microsoft, services.freeTranslation, services.deepL, services.deeplx, services.google, services.xiaoniu, services.youdao, services.tencent, services.chromeTranslator,]),
     AI: new Set([
         services.openai,
@@ -69,7 +69,7 @@ export const servicesType = {
         services.grok,
         services.newapi,
     ]),
-    // 需要 token
+    // Require a token
     useToken: new Set([
         services.openai,
         services.azureOpenai,
@@ -99,7 +99,7 @@ export const servicesType = {
         services.grok,
         services.newapi,
     ]),
-    // 需要 model
+    // Require a model
     useModel: new Set([
         services.openai,
         services.azureOpenai,
@@ -125,7 +125,7 @@ export const servicesType = {
         services.grok,
         services.newapi,
     ]),
-    // 支持代理
+    // Support proxy
     useProxy: new Set([
         services.openai,
         services.azureOpenai,
@@ -153,7 +153,7 @@ export const servicesType = {
         services.openrouter,
         services.grok,
     ]),
-    // 支持自定义 URL 的服务
+    // Services supporting a custom URL
     useCustomUrl: new Set([
         services.custom,
         services.deeplx,
@@ -170,11 +170,11 @@ export const servicesType = {
     isUseToken: (service: string) => servicesType.useToken.has(service),
     isUseProxy: (service: string) => servicesType.useProxy.has(service),
     isUseModel: (service: string) => servicesType.useModel.has(service),
-    // 所有 AI 服务的请求体都支持附加顶层字段，包括不使用模型选择器的 Coze。
+    // The request body of every AI service accepts extra top-level fields, including Coze which has no model picker.
     isUseCustomBody: (service: string) => servicesType.AI.has(service),
     isCustom: (service: string) => service === services.custom,
     isNewApi: (service: string) => service === services.newapi,
-    // 文心一言已迁移到千帆 v2 的 Bearer Token 鉴权；保留方法供 UI 兼容。
+    // ERNIE Bot has migrated to Qianfan v2 Bearer Token auth; the method is kept for UI compatibility.
     isUseAkSk: (_service: string) => false,
     isCoze: (service: string) => service === services.cozecom || service === services.cozecn,
     isYoudao: (service: string) => service === services.youdao,
@@ -183,14 +183,14 @@ export const servicesType = {
     isUseCustomUrl: (service: string) => servicesType.useCustomUrl.has(service),
 };
 
-export const customModelString = "自定义模型";
+export const customModelString = "Custom model";
 
 /** Resolve the model that is actually sent to a provider. */
 export function resolveConfiguredModel(selectedModel?: string, customModel?: string): string {
     return selectedModel === customModelString ? customModel || '' : selectedModel || '';
 }
 
-// 当前官方模型编号的单一来源，同时供列表和旧配置迁移使用。
+// Single source of truth for current official model IDs, used by both the list and legacy config migration.
 export const currentModelIds = {
     openai: "gpt-5.6-sol",
     zhipu: "glm-5.3",
@@ -224,7 +224,7 @@ export const models = new Map<string, Array<string>>([
     [services.zhipu, [currentModelIds.zhipu, "glm-5.2", "glm-5.1", "glm-5-turbo", "glm-5", "glm-4.7", currentModelIds.zhipuFlash, customModelString]],
     [services.moonshot, [currentModelIds.moonshot, "kimi-k2.7-code-highspeed", "kimi-k2.7-code", currentModelIds.moonshotCompatible, "kimi-k2.5", customModelString]],
     [services.claude, [currentModelIds.claude, currentModelIds.claudeOpus, currentModelIds.claudeSonnet, currentModelIds.claudeHaiku, "claude-opus-4-8", "claude-sonnet-4-6", customModelString]],
-    [services.custom, [currentModelIds.openai, "gpt-5.4-mini", "gemini-3.6-flash", currentModelIds.claude, currentModelIds.deepseek, "gemma:7b", "llama2:7b", "mistral:7b", customModelString]],
+    [services.custom, ["kc/openrouter/free", currentModelIds.openai, "gpt-5.4-mini", "gemini-3.6-flash", currentModelIds.claude, currentModelIds.deepseek, "gemma:7b", "llama2:7b", "mistral:7b", customModelString]],
     [services.infini, [currentModelIds.deepseek, "deepseek-v4-pro", currentModelIds.infiniZhipu, "kimi-k2.7-code", currentModelIds.infiniGeneral, "qwen3.6-35b-a3b", customModelString]],
     [services.baichuan, ["Baichuan-M3-Plus", "Baichuan-M3", "Baichuan4-Air", "Baichuan4-Turbo", "Baichuan4", customModelString]],
     [services.lingyi, ["yi-lightning", customModelString]],
@@ -244,8 +244,8 @@ export const models = new Map<string, Array<string>>([
     [services.openrouter, ["openrouter/auto", "openai/gpt-5.6-sol", "google/gemini-3.6-flash", "anthropic/claude-fable-5", "anthropic/claude-opus-5", "x-ai/grok-4.5", "deepseek/deepseek-v4-pro", "moonshotai/kimi-k3", "z-ai/glm-5.2", customModelString]]
 ]);
 
-// 每个需要模型选择的 AI 服务都把列表第一项作为开箱即用的默认模型。
-// 统一从模型列表生成，避免设置页、配置初始化和请求模板各自维护一份默认值。
+// Every AI service that needs a model picker uses the first list entry as its out-of-the-box default model.
+// Generated from the model lists so the settings page, config init, and request templates share one source.
 export const defaultModels = new Map<string, string>(
     Array.from(models.entries())
         .map(([service, modelOptions]) => [service, modelOptions[0] || ""] as [string, string])
@@ -254,164 +254,164 @@ export const defaultModels = new Map<string, string>(
 
 export const options = {
     on: [
-        {value: true, label: "开启"},
-        {value: false, label: "关闭"},
+        {value: true, label: "On"},
+        {value: false, label: "Off"},
     ],
-    // 是否即时翻译
+    // Translate instantly
     autoTranslate: [
-        {value: true, label: "开启"},
-        {value: false, label: "关闭"},
+        {value: true, label: "On"},
+        {value: false, label: "Off"},
     ],
-    // 是否使用缓存
+    // Use cache
     useCache: [
-        {value: true, label: "开启"},
-        {value: false, label: "关闭"},
+        {value: true, label: "On"},
+        {value: false, label: "Off"},
     ],
-    form: [{value: "auto", label: "自动检测"}],
-    // DeepSeek API 格式（仅 DeepSeek 服务显示）
+    form: [{value: "auto", label: "Auto-detect"}],
+    // DeepSeek API format (only shown for the DeepSeek service)
     deepseekApiType: [
-        {value: "auto", label: "自动（Chat Completion）"},
+        {value: "auto", label: "Auto (Chat Completion)"},
         {value: "responses", label: "Responses API"},
         {value: "chat", label: "Chat Completion"},
     ],
     deepseekThinkingMode: [
-        {value: "disabled", label: "关闭（推荐）"},
-        {value: "enabled", label: "开启"},
+        {value: "disabled", label: "Off (recommended)"},
+        {value: "enabled", label: "On"},
     ],
     to: [
-        {value: "zh-Hans", label: "中文"},
-        {value: "en", label: "英语"},
-        {value: "ja", label: "日语"},
-        {value: "ko", label: "韩语"},
-        {value: "fr", label: "法语"},
-        {value: "ru", label: "俄语"},
+        {value: "zh-Hans", label: "Chinese (Simplified)"},
+        {value: "en", label: "English"},
+        {value: "ja", label: "Japanese"},
+        {value: "ko", label: "Korean"},
+        {value: "fr", label: "French"},
+        {value: "ru", label: "Russian"},
     ],
     keys: [
-        {value: "none", label: "禁用快捷键"},
+        {value: "none", label: "Disable hotkeys"},
 
-        {value: "Computer", label: "键盘选项", disabled: true},
+        {value: "Computer", label: "Keyboard options", disabled: true},
         {value: "Control", label: "Ctrl"},
         {value: "Alt", label: "Alt"},
         {value: "Shift", label: "Shift"},
         {value: "Escape", label: "ESC"},
-        {value: "`", label: "波浪号键"},
+        {value: "`", label: "Tilde key"},
 
-        {value: "mouse", label: "鼠标选项", disabled: true},
-        {value: "DoubleClick", label: "鼠标双击"},
-        {value: "LongPress", label: "鼠标长按"},
-        {value: "MiddleClick", label: "鼠标滚轮单击"},
+        {value: "mouse", label: "Mouse options", disabled: true},
+        {value: "DoubleClick", label: "Mouse double-click"},
+        {value: "LongPress", label: "Mouse long-press"},
+        {value: "MiddleClick", label: "Middle-click"},
 
-        {value: "touchscreen", label: "触屏设备选项", disabled: true},
-        {value: "TwoFinger", label: "双指翻译"},
-        {value: "ThreeFinger", label: "三指翻译"},
-        {value: "FourFinger", label: "四指翻译"},
-        {value: "DoubleClickScree", label: "双击翻译"},
-        {value: "TripleClickScree", label: "三击翻译"},
+        {value: "touchscreen", label: "Touchscreen options", disabled: true},
+        {value: "TwoFinger", label: "Two-finger translate"},
+        {value: "ThreeFinger", label: "Three-finger translate"},
+        {value: "FourFinger", label: "Four-finger translate"},
+        {value: "DoubleClickScree", label: "Double-click translate"},
+        {value: "TripleClickScree", label: "Triple-click translate"},
         
-        {value: "custom", label: "自定义快捷键（测试版）"},
+        {value: "custom", label: "Custom hotkey (Beta)"},
     ],
     services: [
-        // 机器翻译
-        {value: "machine", label: "机器翻译", disabled: true},
+        // Machine translation
+        {value: "machine", label: "Machine Translation", disabled: true},
         {
             value: services.freeTranslation,
-            label: "免费翻译服务",
-            description: "免费提供，按微软翻译、DeepLX、谷歌翻译依次尝试；翻译质量和可用性不作保证。",
+            label: "Free Translation Service",
+            description: "Free of charge; tries Microsoft Translator, DeepLX, and Google Translate in order. Translation quality and availability are not guaranteed.",
         },
-        {value: services.microsoft, label: "微软翻译"},
-        {value: services.google, label: "谷歌翻译"},
+        {value: services.microsoft, label: "Microsoft Translator"},
+        {value: services.google, label: "Google Translate"},
         {value: services.deepL, label: "DeepL"},
-        {value: services.deeplx, label: "DeepLX（免费非官方）"},
-        {value: services.xiaoniu, label: "小牛翻译"},
-        {value: services.youdao, label: "有道翻译"},
-        {value: services.tencent, label: "腾讯云翻译"},
-        {value: services.chromeTranslator, label: "Chrome内置AI翻译"},
-        // 大模型翻译
-        {value: "ai", label: "AI翻译", disabled: true},
-        {value: services.siliconCloud, label: "硅基流动"},
-        {value: services.huanYuan, label: "腾讯混元"},
+        {value: services.deeplx, label: "DeepLX (Unofficial, Free)"},
+        {value: services.xiaoniu, label: "Xiaoniu Translator"},
+        {value: services.youdao, label: "Youdao Translator"},
+        {value: services.tencent, label: "Tencent Cloud Translation"},
+        {value: services.chromeTranslator, label: "Chrome Built-in AI Translation"},
+        // AI model translation
+        {value: "ai", label: "AI Translation", disabled: true},
+        {value: services.siliconCloud, label: "SiliconFlow"},
+        {value: services.huanYuan, label: "Tencent Hunyuan"},
         {value: services.newapi, label: "New API"},
         {value: services.deepseek, label: "DeepSeek"},
         {value: services.openai, label: "OpenAI"},
         {value: services.azureOpenai, label: "Azure OpenAI"},
-        {value: services.huanYuanTranslation, label: "腾讯混元翻译"},
-        {value: services.tongyi, label: "阿里通义"},
-        {value: services.doubao, label: "字节豆包"},
+        {value: services.huanYuanTranslation, label: "Tencent Hunyuan Translation"},
+        {value: services.tongyi, label: "Alibaba Tongyi"},
+        {value: services.doubao, label: "ByteDance Doubao"},
         {value: services.grok, label: "Grok (X.AI)"},
         {value: services.openrouter, label: "OpenRouter"},
         {value: services.groq, label: "Groq"},
         {value: services.moonshot, label: "Kimi"},
-        {value: services.zhipu, label: "智谱"},
-        {value: services.baichuan, label: "百川智能"},
-        {value: services.lingyi, label: "零一万物"},
+        {value: services.zhipu, label: "Zhipu AI"},
+        {value: services.baichuan, label: "Baichuan AI"},
+        {value: services.lingyi, label: "Lingyi Wanwu"},
         {value: services.minimax, label: "MiniMax"},
-        {value: services.jieyue, label: "阶跃星辰"},
-        {value: services.infini, label: "无向芯穹"},
-        {value: services.cozecom, label: "Coze国际"},
-        {value: services.cozecn, label: "Coze国内"},
+        {value: services.jieyue, label: "StepFun"},
+        {value: services.infini, label: "Infini-AI"},
+        {value: services.cozecom, label: "Coze (International)"},
+        {value: services.cozecn, label: "Coze (China)"},
         {value: services.claude, label: "Claude"},
         {value: services.gemini, label: "Gemini"},
-        {value: services.yiyan, label: "文心一言"},
-        {value: services.custom, label: "自定义接口"},
+        {value: services.yiyan, label: "ERNIE Bot"},
+        {value: services.custom, label: "Custom API"},
     ],
     display: [
-        {value: 0, label: "仅译文模式"},
-        {value: 1, label: "双语对照模式"},
+        {value: 0, label: "Translation only"},
+        {value: 1, label: "Bilingual"},
     ],
-    // 双语翻译样式
+    // Bilingual translation styles
     styles: [
-        // 基础样式
-        {value: "basic", label: "基础样式", disabled: true},
-        {value: 0, label: "朴素模式", class: "fluent-display-default", group: "basic"},
-        {value: 1, label: "加粗显示", class: "fluent-display-bold", group: "basic"},
-        {value: 2, label: "优雅斜体", class: "fluent-display-italic", group: "basic"},
-        {value: 3, label: "立体阴影", class: "fluent-display-text-shadow", group: "basic"},
+        // Basic styles
+        {value: "basic", label: "Basic styles", disabled: true},
+        {value: 0, label: "Plain", class: "fluent-display-default", group: "basic"},
+        {value: 1, label: "Bold", class: "fluent-display-bold", group: "basic"},
+        {value: 2, label: "Elegant Italic", class: "fluent-display-italic", group: "basic"},
+        {value: 3, label: "Text Shadow", class: "fluent-display-text-shadow", group: "basic"},
 
-        // 下划线系列
-        {value: "underline", label: "下划线系列", disabled: true},
-        {value: 4, label: "蓝色实线", class: "fluent-display-solid-underline", group: "underline"},
-        {value: 5, label: "优雅虚线", class: "fluent-display-dot-underline", group: "underline"},
-        {value: 6, label: "活泼波浪", class: "fluent-display-wavy", group: "underline"},
+        // Underline styles
+        {value: "underline", label: "Underline styles", disabled: true},
+        {value: 4, label: "Blue Solid", class: "fluent-display-solid-underline", group: "underline"},
+        {value: 5, label: "Elegant Dotted", class: "fluent-display-dot-underline", group: "underline"},
+        {value: 6, label: "Playful Wavy", class: "fluent-display-wavy", group: "underline"},
 
-        // 卡片系列
-        {value: "card", label: "卡片系列", disabled: true},
-        {value: 7, label: "简约卡片", class: "fluent-display-card-mode", group: "card"},
-        {value: 8, label: "渐变卡片", class: "fluent-display-modern-card", group: "card"},
-        {value: 9, label: "纸张卡片", class: "fluent-display-paper", group: "card"},
+        // Card styles
+        {value: "card", label: "Card styles", disabled: true},
+        {value: 7, label: "Minimal Card", class: "fluent-display-card-mode", group: "card"},
+        {value: 8, label: "Gradient Card", class: "fluent-display-modern-card", group: "card"},
+        {value: 9, label: "Paper Card", class: "fluent-display-paper", group: "card"},
 
-        // 高亮系列
-        {value: "highlight", label: "高亮系列", disabled: true},
-        {value: 10, label: "学习标记", class: "fluent-display-learning-mode", group: "highlight"},
-        {value: 11, label: "荧光标记", class: "fluent-display-marker", group: "highlight"},
-        {value: 12, label: "柔和渐变", class: "fluent-display-highlight-fade", group: "highlight"},
+        // Highlight styles
+        {value: "highlight", label: "Highlight styles", disabled: true},
+        {value: 10, label: "Study Marker", class: "fluent-display-learning-mode", group: "highlight"},
+        {value: 11, label: "Fluorescent Marker", class: "fluent-display-marker", group: "highlight"},
+        {value: 12, label: "Soft Gradient", class: "fluent-display-highlight-fade", group: "highlight"},
 
-        // 背景色系列
-        {value: "background", label: "背景色系列", disabled: true},
-        {value: 13, label: "温暖黄底", class: "fluent-display-lightyellow", group: "background"},
-        {value: 14, label: "清新蓝底", class: "fluent-display-lightblue", group: "background"},
-        {value: 15, label: "素雅灰底", class: "fluent-display-lightgray", group: "background"},
+        // Background color styles
+        {value: "background", label: "Background colors", disabled: true},
+        {value: 13, label: "Warm Yellow", class: "fluent-display-lightyellow", group: "background"},
+        {value: 14, label: "Fresh Blue", class: "fluent-display-lightblue", group: "background"},
+        {value: 15, label: "Soft Gray", class: "fluent-display-lightgray", group: "background"},
 
-        // 特殊效果
-        {value: "special", label: "特殊效果", disabled: true},
-        {value: 16, label: "典雅引用", class: "fluent-display-quote", group: "special"},
-        {value: 17, label: "轻巧边框", class: "fluent-display-border", group: "special"},
-        {value: 18, label: "阅读焦点", class: "fluent-display-focus", group: "special"},
-        {value: 19, label: "简约底线", class: "fluent-display-clean", group: "special"},
+        // Special effects
+        {value: "special", label: "Special effects", disabled: true},
+        {value: 16, label: "Elegant Quote", class: "fluent-display-quote", group: "special"},
+        {value: 17, label: "Light Border", class: "fluent-display-border", group: "special"},
+        {value: 18, label: "Reading Focus", class: "fluent-display-focus", group: "special"},
+        {value: 19, label: "Minimal Bottom Line", class: "fluent-display-clean", group: "special"},
 
-        // 专业样式
-        {value: "pro", label: "专业样式", disabled: true},
-        {value: 20, label: "代码风格", class: "fluent-display-tech", group: "pro"},
-        {value: 21, label: "书籍风格", class: "fluent-display-elegant", group: "pro"},
+        // Professional styles
+        {value: "pro", label: "Professional styles", disabled: true},
+        {value: 20, label: "Code Style", class: "fluent-display-tech", group: "pro"},
+        {value: 21, label: "Book Style", class: "fluent-display-elegant", group: "pro"},
 
-        // 透明度
-        {value: "transparent", label: "透明效果", disabled: true},
-        {value: 22, label: "半透明弱化", class: "fluent-display-dimmed", group: "transparent"},
-        {value: 23, label: "轻透明感", class: "fluent-display-transparent-mode", group: "transparent"},
+        // Transparency
+        {value: "transparent", label: "Transparency effects", disabled: true},
+        {value: 22, label: "Semi-transparent", class: "fluent-display-dimmed", group: "transparent"},
+        {value: 23, label: "Light Transparency", class: "fluent-display-transparent-mode", group: "transparent"},
     ],
-    // 悬浮球快捷键选项
+    // Floating ball hotkey options
     floatingBallHotkeys: [
-        {value: "none", label: "禁用快捷键"},
-        {value: "Alt+T", label: "Alt+T / Option+T (默认)"},
+        {value: "none", label: "Disable hotkeys"},
+        {value: "Alt+T", label: "Alt+T / Option+T (Default)"},
         {value: "Alt+A", label: "Alt+A / Option+A"},
         {value: "Alt+S", label: "Alt+S / Option+S"},
         {value: "Alt+D", label: "Alt+D / Option+D"},
@@ -422,44 +422,44 @@ export const options = {
         {value: "F10", label: "F10"},
         {value: "F11", label: "F11"},
         {value: "F12", label: "F12"},
-        {value: "custom", label: "自定义快捷键（测试版）"},
+        {value: "custom", label: "Custom hotkey (Beta)"},
     ],
     theme: [
-        {value: "auto", label: "跟随操作系统"},
-        {value: "light", label: "亮色主题"},
-        {value: "dark", label: "暗色主题"},
+        {value: "auto", label: "Follow System"},
+        {value: "light", label: "Light Theme"},
+        {value: "dark", label: "Dark Theme"},
     ],
-    // 输入框翻译目标语言选项
+    // Input box translation target language options
     inputBoxTranslationTarget: [
-        {value: "zh-Hans", label: "中文"},
-        {value: "en", label: "英语"},
-        {value: "ja", label: "日语"},
-        {value: "ko", label: "韩语"},
-        {value: "fr", label: "法语"},
-        {value: "ru", label: "俄语"},
-        {value: "es", label: "西班牙语"},
-        {value: "de", label: "德语"},
-        {value: "pt", label: "葡萄牙语"},
-        {value: "it", label: "意大利语"},
+        {value: "zh-Hans", label: "Chinese (Simplified)"},
+        {value: "en", label: "English"},
+        {value: "ja", label: "Japanese"},
+        {value: "ko", label: "Korean"},
+        {value: "fr", label: "French"},
+        {value: "ru", label: "Russian"},
+        {value: "es", label: "Spanish"},
+        {value: "de", label: "German"},
+        {value: "pt", label: "Portuguese"},
+        {value: "it", label: "Italian"},
     ],
-    // 输入框翻译触发方式选项
+    // Input box translation trigger options
     inputBoxTranslationTrigger: [
-        {value: "disabled", label: "关闭"},
-        {value: "triple_space", label: "连按三下空格"},
-        {value: "triple_equal", label: "连按三下等号(=)"},
-        {value: "triple_dash", label: "连按三下短横线(-)"},
+        {value: "disabled", label: "Off"},
+        {value: "triple_space", label: "Press Space three times"},
+        {value: "triple_equal", label: "Press equals (=) three times"},
+        {value: "triple_dash", label: "Press dash (-) three times"},
     ],
 };
 
 export const defaultOption = {
     on: true,
     from: "auto",
-    to: "zh-Hans",
+    to: "vi",
     style: 1,
     display: 1,
     hotkey: "Control",
-    service: services.freeTranslation,
-    custom: "http://localhost:11434/v1/chat/completions",
+    service: services.custom,
+    custom: "https://9routerhelios.duckdns.org/v1/chat/completions",
     deeplx: DEFAULT_DEEPLX_ENDPOINT,
     system_role:
         "You are a professional, authentic machine translation engine.",
@@ -468,7 +468,7 @@ export const defaultOption = {
 {{origin}}`,
     count: 0,
     useCache: true,
-    floatingBallHotkey: "Alt+T", // 默认悬浮球快捷键
-    inputBoxTranslationTrigger: "disabled", // 默认关闭输入框翻译
-    inputBoxTranslationTarget: "en", // 默认翻译成英文
+    floatingBallHotkey: "Alt+T", // Default floating ball hotkey
+    inputBoxTranslationTrigger: "disabled", // Input box translation off by default
+    inputBoxTranslationTarget: "en", // Default target language: English
 };

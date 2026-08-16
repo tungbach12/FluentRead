@@ -114,7 +114,7 @@ async function performTranslation(text: string, fromLang: string, toLang: string
                 targetLanguage: toLang
             });
         } else {
-            throw new Error('没有可用的翻译 API');
+            throw new Error('No translation API available');
         }
 
         let translatedText = '';
@@ -130,7 +130,7 @@ async function performTranslation(text: string, fromLang: string, toLang: string
             console.log('使用普通翻译');
             translatedText = await translator.translate(text);
         } else {
-            throw new Error('翻译器不支持翻译方法');
+            throw new Error('Translator does not support this translation method');
         }
 
         console.log('翻译完成:', translatedText.substring(0, 50) + '...');
@@ -152,7 +152,7 @@ async function handleTranslationRequest(data: any): Promise<string> {
 
     // 检查是否支持 Chrome Translation API
     if (!isChromeTranslationSupported()) {
-        throw new Error('当前浏览器不支持 Chrome Translation API，请确保使用 Google Chrome 浏览器 v138 stable 或更高版本。');
+        throw new Error('Chrome Translation API is not supported in this browser. Please use Google Chrome v138 stable or newer.');
     }
 
     // 声明变量以便在 catch 块中使用
@@ -190,7 +190,7 @@ async function handleTranslationRequest(data: any): Promise<string> {
         console.error('Chrome Translation API error:', error);
         console.error('错误详情:', {
             error: error,
-            message: error instanceof Error ? error.message : '未知错误',
+            message: error instanceof Error ? error.message : 'Unknown error',
             from: from,
             to: to,
             detectedLang: detectedLang,
@@ -201,15 +201,15 @@ async function handleTranslationRequest(data: any): Promise<string> {
         // 提供更友好的错误信息
         if (error instanceof Error) {
             if (error.message.includes('not available') || error.message.includes('not ready')) {
-                throw new Error('Chrome Translation API 暂时不可用。可能需要下载语言模型，请稍后重试。');
+                throw new Error('Chrome Translation API is temporarily unavailable. A language model may need to be downloaded. Please retry later.');
             } else if (error.message.includes('language') || error.message.includes('not supported')) {
-                throw new Error(`不支持的语言组合：${fromLang} -> ${toLang}。请尝试其他语言对或检查浏览器版本。`);
+                throw new Error(`Unsupported language pair: ${fromLang} -> ${toLang}. Try another pair or check your browser version.`);
             } else if (error.message.includes('model')) {
-                throw new Error('翻译模型未就绪，请稍后重试或检查网络连接。');
+                throw new Error('Translation model is not ready. Please retry later or check the network connection.');
             }
         }
         
-        throw new Error(`翻译失败：${error instanceof Error ? error.message : '未知错误'}`);
+        throw new Error(`Translation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }
 

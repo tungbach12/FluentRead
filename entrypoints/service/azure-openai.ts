@@ -10,17 +10,17 @@ async function azureOpenai(message: any) {
         // 验证必要的配置
         const apiKey = config.token[service];
         if ((!apiKey || apiKey.trim() === '') && isApiKeyRequired(service, config)) {
-            throw new Error('Azure OpenAI API Key 未配置，请在设置中输入有效的 API Key');
+            throw new Error('Azure OpenAI API Key is not configured. Enter a valid API Key in Settings.');
         }
 
         const endpoint = config.azureOpenaiEndpoint;
         if (!endpoint || endpoint.trim() === '') {
-            throw new Error('Azure OpenAI 端点地址未配置，请在设置中输入完整的端点地址');
+            throw new Error('Azure OpenAI endpoint is not configured. Enter the full endpoint URL in Settings.');
         }
 
         // 验证端点地址格式
         if (!endpoint.includes('openai.azure.com') || !endpoint.includes('/chat/completions')) {
-            throw new Error('Azure OpenAI 端点地址格式不正确，请确保包含正确的域名和路径');
+            throw new Error('Azure OpenAI endpoint format is incorrect. Make sure it includes the correct domain and path.');
         }
 
         const headers = new Headers({'Content-Type': 'application/json'});
@@ -34,21 +34,21 @@ async function azureOpenai(message: any) {
 
         if (!resp.ok) {
             const errorText = await resp.text();
-            let errorMessage = `Azure OpenAI API 调用失败: ${resp.status} ${resp.statusText}`;
+            let errorMessage = `Azure OpenAI API call failed: ${resp.status} ${resp.statusText}`;
             
             // 根据状态码提供更具体的错误信息
             switch (resp.status) {
                 case 401:
-                    errorMessage = 'API Key 无效或已过期，请检查您的 Azure OpenAI API Key';
+                    errorMessage = 'API Key is invalid or expired. Check your Azure OpenAI API Key.';
                     break;
                 case 404:
-                    errorMessage = '端点地址不存在，请检查资源名称和部署名称是否正确';
+                    errorMessage = 'The endpoint does not exist. Check that the resource name and deployment name are correct.';
                     break;
                 case 429:
-                    errorMessage = 'API 调用频率超限，请稍后重试或检查配额设置';
+                    errorMessage = 'API rate limit exceeded. Retry later or check your quota settings.';
                     break;
                 case 500:
-                    errorMessage = 'Azure OpenAI 服务内部错误，请稍后重试';
+                    errorMessage = 'Azure OpenAI service internal error. Please retry later.';
                     break;
                 default:
                     errorMessage += `\n详细信息: ${errorText}`;

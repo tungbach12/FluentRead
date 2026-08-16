@@ -1,11 +1,11 @@
 <template>
   <div class="footer-container footer-size">
-    <p class="translation-count">你已经翻译
+    <p class="translation-count">You have translated
       <el-text class="count-number" type="primary">{{ computedCount }}</el-text>
-      次
+      times
     </p>
     <div class="footer-links">
-      <el-link class="action-link left" :class="{ 'failed': buttonText === '清除失败', 'success': buttonText === '清除成功' }" @click="clearCache"
+      <el-link class="action-link left" :class="{ 'failed': buttonText === 'Clear failed', 'success': buttonText === 'Clear succeeded' }" @click="clearCache"
         :disabled="buttonDisabled">
         <el-icon v-if="showLoading">
           <Loading class="el-icon-loading" />
@@ -17,14 +17,14 @@
           <el-icon class="github-icon">
             <Star />
           </el-icon>
-          GitHub开源
+          Open source on GitHub
         </el-link>
       </div>
     </div>
     
-    <!-- 赞赏码弹窗 -->
+    <!-- Donation dialog -->
     <div
-      title="赞赏作者"
+      title="Support the developer"
       width="300px"
       align-center
       :show-close="true"
@@ -33,12 +33,12 @@
       class="donate-dialog"
     >
       <div class="donate-content">
-        <p class="donate-text">如果你觉得这个插件对您有帮助，<br>可以通过微信👇🏻赞赏作者一杯咖啡
+        <p class="donate-text">If you find this extension helpful,<br>you can buy the developer a coffee via WeChat 👇🏻
           <el-icon class="donate-icon"><Coffee /></el-icon> </p>
         <div class="qrcode-container">
-          <img src="/misc/approve.jpg" alt="赞赏码" class="qrcode-image" />
+          <img src="/misc/approve.jpg" alt="Donation QR code" class="qrcode-image" />
         </div>
-        <p class="donate-thanks">感谢你的支持！❤️</p>
+        <p class="donate-thanks">Thank you for your support! ❤️</p>
       </div>
     </div>
   </div>
@@ -53,13 +53,13 @@ import { config, configReady, subscribeConfig } from '@/entrypoints/utils/config
 
 // 实际上是 el-link 而不是 el-button
 const buttonDisabled = ref(false);
-const buttonText = ref('清除翻译缓存');
+const buttonText = ref('Clear translation cache');
 
 const showLoading = ref(false);
 async function clearCache() {
   try {
     buttonDisabled.value = true;
-    buttonText.value = "正在清除...";
+    buttonText.value = "Clearing...";
     showLoading.value = true;
 
     // 获取当前标签页
@@ -72,23 +72,23 @@ async function clearCache() {
     await browser.tabs.sendMessage(tabs[0].id, { message: 'clearCache' });
 
     // 显示成功状态
-    buttonText.value = "清除成功";
+    buttonText.value = "Clear succeeded";
 
     // 恢复按钮状态
     setTimeout(() => {
       buttonDisabled.value = false;
-      buttonText.value = '清除翻译缓存';
+      buttonText.value = 'Clear translation cache';
       showLoading.value = false;
     }, 1500);
 
   } catch (error) {
     console.error('清除缓存失败:', error);
-    buttonText.value = "清除失败";
+    buttonText.value = "Clear failed";
 
     // 恢复按钮状态
     setTimeout(() => {
       buttonDisabled.value = false;
-      buttonText.value = '清除翻译缓存';
+      buttonText.value = 'Clear translation cache';
       showLoading.value = false;
     }, 1500);
   }

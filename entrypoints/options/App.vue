@@ -3,10 +3,10 @@
     <aside class="sidebar">
       <div class="brand">
         <img src="/icon/128.png" alt="" />
-        <div><strong>流畅阅读</strong><small>FluentRead · V{{ version }}</small></div>
+        <div><strong>FluentRead</strong><small>FluentRead · V{{ version }}</small></div>
       </div>
 
-      <nav aria-label="设置分类">
+      <nav aria-label="Settings sections">
         <section v-for="group in navigationGroups" :key="group.label" class="nav-group">
           <span class="nav-group-label">{{ group.label }}</span>
           <button
@@ -33,16 +33,16 @@
         </div>
         <label class="search-box">
           <span aria-hidden="true">⌕</span>
-          <input v-model.trim="query" type="search" placeholder="搜索设置，例如：快捷键、缓存、OpenAI" />
+          <input v-model.trim="query" type="search" placeholder="Search settings, e.g. shortcut, cache, OpenAI" />
         </label>
       </header>
 
       <div v-if="query && filteredResults.length" class="search-results">
         <button v-for="result in filteredResults" :key="result.id" type="button" @click="selectResult(result.id)">
-          <span><strong>{{ result.label }}</strong><small>{{ result.searchDescription }}</small></span><b>打开 →</b>
+          <span><strong>{{ result.label }}</strong><small>{{ result.searchDescription }}</small></span><b>Open →</b>
         </button>
       </div>
-      <div v-else-if="query" class="search-empty">没有找到“{{ query }}”相关设置</div>
+      <div v-else-if="query" class="search-empty">No settings found for “{{ query }}”</div>
 
       <section class="settings-card" :class="{ 'services-view': activeSection === 'settings-services' }" :aria-label="activeItem.heading">
         <div v-if="!['settings-services', 'settings-about'].includes(activeSection)" class="card-intro">
@@ -52,40 +52,40 @@
         </div>
         <section v-if="activeSection === 'settings-about'" id="settings-about" class="about-page" aria-labelledby="about-title">
           <div class="about-hero">
-            <img class="about-logo" src="/icon/128.png" alt="流畅阅读图标" />
+            <img class="about-logo" src="/icon/128.png" alt="FluentRead logo" />
             <div>
-              <span class="eyebrow">关于流畅阅读</span>
-              <h3 id="about-title">让双语阅读自然发生</h3>
-              <p>流畅阅读是一款开源浏览器翻译插件，帮助你在阅读网页时更自然地理解不同语言的内容。</p>
+              <span class="eyebrow">About FluentRead</span>
+              <h3 id="about-title">Bilingual reading, made natural</h3>
+              <p>FluentRead is an open-source browser translation extension that helps you understand content in different languages naturally as you read.</p>
               <span class="about-version">FluentRead · V{{ version }}</span>
             </div>
           </div>
 
           <div class="about-grid">
             <article class="about-panel">
-              <span class="about-panel-kicker">核心体验</span>
-              <h3>为阅读而生</h3>
-              <p>从网页翻译到划词、悬浮与快捷键，把常用能力放在真正需要的位置。</p>
+              <span class="about-panel-kicker">Core experience</span>
+              <h3>Built for reading</h3>
+              <p>From full-page translation to selection, floating ball, and shortcuts — every capability lives exactly where you need it.</p>
               <div class="about-feature-list">
-                <span><b>译</b>网页双语阅读</span>
-                <span><b>⌘</b>顺手的阅读工具</span>
-                <span><b>AI</b>灵活的翻译服务</span>
+                <span><b>译</b>Bilingual full-page reading</span>
+                <span><b>⌘</b>Reading tools, at hand</span>
+                <span><b>AI</b>Flexible translation services</span>
               </div>
             </article>
 
             <article class="about-panel about-links-panel">
-              <span class="about-panel-kicker">了解更多</span>
-              <h3>一起让它变得更好</h3>
-              <p>查看项目代码、使用文档，或反馈你在阅读中的想法。</p>
+              <span class="about-panel-kicker">Learn more</span>
+              <h3>Make it better together</h3>
+              <p>Browse the source code, read the docs, or share your thoughts on reading.</p>
               <div class="about-links">
-                <a href="https://github.com/Bistutu/FluentRead" target="_blank" rel="noreferrer">开源项目 <span>↗</span></a>
-                <a href="https://fluent.thinkstu.com/" target="_blank" rel="noreferrer">使用文档 <span>↗</span></a>
-                <a href="https://github.com/Bistutu/FluentRead/issues" target="_blank" rel="noreferrer">问题反馈 <span>↗</span></a>
+                <a href="https://github.com/Bistutu/FluentRead" target="_blank" rel="noreferrer">Open source <span>↗</span></a>
+                <a href="https://fluent.thinkstu.com/" target="_blank" rel="noreferrer">Documentation <span>↗</span></a>
+                <a href="https://github.com/Bistutu/FluentRead/issues" target="_blank" rel="noreferrer">Report an issue <span>↗</span></a>
               </div>
             </article>
           </div>
 
-          <p class="about-footer">感谢你使用流畅阅读。</p>
+          <p class="about-footer">Thank you for using FluentRead.</p>
         </section>
         <Main v-else :active-section="activeSection" />
       </section>

@@ -26,7 +26,7 @@ async function common(message: any) {
         });
 
         if (!resp.ok) {
-            throw new Error(`翻译失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+            throw new Error(`Translation failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
         }
 
         const result = await resp.json();

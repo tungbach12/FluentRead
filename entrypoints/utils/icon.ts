@@ -32,7 +32,7 @@ export function insertFailedTip(
 
   // 创建重试按钮
   const retryBtn = document.createElement("span");
-  retryBtn.innerText = "重试";
+  retryBtn.innerText = "Retry";
   retryBtn.classList.add("fluent-read-retry");
   retryBtn.addEventListener("click", handleRetryClick(node, wrapper));
 
@@ -41,7 +41,7 @@ export function insertFailedTip(
 
   // 创建错误信息提示按钮
   const errorTip = document.createElement("span");
-  errorTip.innerText = "错误原因";
+  errorTip.innerText = "Error reason";
   errorTip.classList.add("fluent-read-reason");
   errorTip.addEventListener("click", handleErrorClick(errMsg));
 

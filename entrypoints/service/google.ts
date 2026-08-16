@@ -88,7 +88,7 @@ export function parseGoogleBatchResponse(responseBody: string): string {
         }
     }
 
-    throw new Error('返回格式异常');
+    throw new Error('Unexpected response format');
 }
 
 export function parseGoogleLegacyResponse(responseBody: string): string {
@@ -96,19 +96,19 @@ export function parseGoogleLegacyResponse(responseBody: string): string {
     try {
         result = JSON.parse(responseBody);
     } catch {
-        throw new Error('返回的不是 JSON');
+        throw new Error('Response is not JSON');
     }
 
     const translatedText = joinTranslationSegments(getArrayItem(result, 0));
     if (translatedText === null) {
-        throw new Error('返回格式异常');
+        throw new Error('Unexpected response format');
     }
     return translatedText;
 }
 
 function formatResponseBody(responseBody: string): string {
     if (/<!doctype html|<html[\s>]/i.test(responseBody)) {
-        return '收到 HTML 页面（可能触发了 CAPTCHA）';
+        return 'Received an HTML page (possibly triggered a CAPTCHA)';
     }
 
     const compactBody = responseBody.replace(/\s+/g, ' ').trim();
@@ -123,8 +123,8 @@ function getErrorMessage(error: unknown): string {
 }
 
 function createGoogleParseError(error: unknown, responseBody: string): Error {
-    const responsePreview = formatResponseBody(responseBody) || '空响应';
-    return new Error(`${getErrorMessage(error)}，响应摘要: ${responsePreview}`);
+    const responsePreview = formatResponseBody(responseBody) || 'Empty response';
+    return new Error(`${getErrorMessage(error)}, response summary: ${responsePreview}`);
 }
 
 async function fetchGoogleResponse(
@@ -141,13 +141,13 @@ async function fetchGoogleResponse(
         if (!response.ok) {
             const bodyPreview = formatResponseBody(responseBody);
             throw new Error(
-                `HTTP ${response.status} ${response.statusText}${bodyPreview ? `，响应: ${bodyPreview}` : ''}`,
+                `HTTP ${response.status} ${response.statusText}${bodyPreview ? `, response: ${bodyPreview}` : ''}`,
             );
         }
         return {responseBody};
     } catch (error) {
         if (controller.signal.aborted) {
-            throw new Error(`请求超时（${timeoutMs / 1000} 秒）`);
+            throw new Error(`Request timed out after ${timeoutMs / 1000} seconds`);
         }
         throw error;
     } finally {
@@ -208,7 +208,7 @@ export async function translateGoogleText(
 ): Promise<string> {
     const providers: GoogleProvider[] = [
         ...GOOGLE_TRANSLATE_BATCH_URLS.map((endpoint, index) => ({
-            name: index === 0 ? '主网页 RPC' : '备用网页 RPC',
+            name: index === 0 ? 'Primary web RPC' : 'Fallback web RPC',
             translate: (timeoutMs: number) => translateGoogleBatch(
                 endpoint,
                 text,
@@ -218,7 +218,7 @@ export async function translateGoogleText(
             ),
         })),
         {
-            name: '旧版 gtx 接口',
+            name: 'Legacy gtx endpoint',
             translate: (timeoutMs: number) => translateGoogleLegacy(
                 text,
                 fromLang,
@@ -244,12 +244,12 @@ export async function translateGoogleText(
     }
 
     const failureSummary = failures.length > 0 ? failures.join('；') : '总请求时间已耗尽';
-    throw new Error(`谷歌翻译所有匿名接口均失败：${failureSummary}`);
+    throw new Error(`All Google Translate anonymous endpoints failed: ${failureSummary}`);
 }
 
 async function google(message: {origin: string}) {
     if (typeof message.origin !== 'string') {
-        throw new Error('谷歌翻译仅支持单条文本');
+        throw new Error('Google Translate supports single text only');
     }
     return translateGoogleText(message.origin, config.from, config.to);
 }

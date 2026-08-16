@@ -17,7 +17,7 @@ async function zhipu(message: any) {
         secret = undefined;
     } else if (!secret || expiration <= Date.now()) {
         secret = generateToken(token);
-        if (!secret) throw new Error('无法生成令牌');
+        if (!secret) throw new Error('Unable to generate a token');
         // 保存 secret 和 expiration
         config.extra[service] = {secret, expiration: Date.now() + 3600000 * 24};
         await saveConfig();
@@ -40,7 +40,7 @@ async function zhipu(message: any) {
         return result.choices[0].message.content;
     } else {
         console.log(resp)
-        throw new Error(`翻译失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+        throw new Error(`Translation failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
     }
 }
 

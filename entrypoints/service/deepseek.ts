@@ -31,7 +31,7 @@ async function deepseek(message: any) {
         });
 
         if (!resp.ok) {
-            throw new Error(`翻译失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+            throw new Error(`Translation failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
         }
 
         const result = await resp.json();
@@ -48,7 +48,7 @@ function extractChatContent(result: any): string {
     const content = result?.choices?.[0]?.message?.content;
 
     if (typeof content !== 'string') {
-        throw new Error('DeepSeek 返回数据格式异常：缺少 choices[0].message.content');
+        throw new Error('DeepSeek returned an unexpected format: missing choices[0].message.content');
     }
 
     // Only final message.content is rendered. DeepSeek thinking fields such as
@@ -71,7 +71,7 @@ function extractResponsesContent(result: any): string {
         : '';
 
     if (!text) {
-        throw new Error('DeepSeek 返回数据格式异常：缺少 Responses API 输出文本');
+        throw new Error('DeepSeek returned an unexpected format: missing Responses API output text');
     }
 
     return contentPostHandler(text);

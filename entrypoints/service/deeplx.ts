@@ -37,9 +37,9 @@ async function fetchDeepLX(url: string, requestInit: RequestInit, timeoutMs: num
         return await fetch(url, {...requestInit, signal: controller.signal});
     } catch (error) {
         if (controller.signal.aborted) {
-            throw new Error(`请求超时（${timeoutMs / 1000} 秒）`);
+            throw new Error(`Request timed out after ${timeoutMs / 1000} seconds`);
         }
-        throw new Error(`网络错误: ${getErrorMessage(error)}`);
+        throw new Error(`Network error: ${getErrorMessage(error)}`);
     } finally {
         clearTimeout(timeout);
     }
@@ -73,26 +73,26 @@ async function translateFromDeepLX(
     const responseBody = await response.text();
     if (!response.ok) {
         const preview = formatResponseBody(responseBody);
-        throw new Error(`HTTP ${response.status} ${response.statusText}${preview ? `，响应: ${preview}` : ""}`);
+        throw new Error(`HTTP ${response.status} ${response.statusText}${preview ? `, response: ${preview}` : ""}`);
     }
 
     let result: unknown;
     try {
         result = JSON.parse(responseBody);
     } catch (error) {
-        throw new Error(`返回的不是 JSON: ${getErrorMessage(error)}`);
+        throw new Error(`Response is not JSON: ${getErrorMessage(error)}`);
     }
 
     if (!result || typeof result !== "object") {
-        throw new Error("返回格式异常");
+        throw new Error("Unexpected response format");
     }
 
     const responseData = result as {code?: unknown; data?: unknown; message?: unknown};
     if (responseData.code !== undefined && responseData.code !== 200) {
-        throw new Error(`DeepLX 返回错误: ${String(responseData.message || `code ${String(responseData.code)}`)}`);
+        throw new Error(`DeepLX returned an error: ${String(responseData.message || `code ${String(responseData.code)}`)}`);
     }
     if (typeof responseData.data !== "string" || responseData.data.trim().length === 0) {
-        throw new Error("返回格式异常：缺少译文");
+        throw new Error("Unexpected response format: missing translation");
     }
 
     return responseData.data;
@@ -114,7 +114,7 @@ export async function translateDeepLXText(
     serviceKey: string = services.deeplx,
 ): Promise<string> {
     if (typeof text !== "string") {
-        throw new Error("DeepLX 翻译仅支持单条文本");
+        throw new Error("DeepLX translation supports single text only");
     }
 
     const token = config.token[serviceKey]?.trim() || "";
@@ -143,17 +143,17 @@ export async function translateDeepLXText(
                 Math.min(DEEPLX_ATTEMPT_TIMEOUT_MS, remainingTime),
             );
         } catch (error) {
-            failures.push(`备用站点 ${index + 1}: ${getErrorMessage(error)}`);
+            failures.push(`Fallback site ${index + 1}: ${getErrorMessage(error)}`);
         }
     }
 
     const failureSummary = failures.length > 0 ? failures.join("；") : "总请求时间已耗尽";
-    throw new Error(`DeepLX 所有备用站点均失败：${failureSummary}`);
+    throw new Error(`All DeepLX fallback sites failed: ${failureSummary}`);
 }
 
 async function deeplx(message: {origin: string}) {
     if (typeof message.origin !== "string") {
-        throw new Error("DeepLX 翻译仅支持单条文本");
+        throw new Error("DeepLX translation supports single text only");
     }
 
     return translateDeepLXText(message.origin, services.deeplx);

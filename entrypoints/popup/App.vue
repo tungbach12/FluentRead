@@ -4,18 +4,18 @@
       <div class="brand">
         <img src="/icon/128.png" alt="" />
         <div>
-          <strong>流畅阅读</strong>
+          <strong>FluentRead</strong>
           <small>FluentRead · V{{ version }}</small>
         </div>
       </div>
       <div class="header-actions">
-        <button class="donation-button" type="button" title="赞赏流畅阅读" aria-label="打开赞赏页" @click="openDonation()">
+        <button class="donation-button" type="button" title="Support FluentRead" aria-label="Open support page" @click="openDonation()">
           <Coffee />
-          <span>赞赏</span>
+          <span>Support</span>
         </button>
-        <button class="settings-button" type="button" title="完整设置" aria-label="打开完整设置" @click="openOptions()">
+        <button class="settings-button" type="button" title="Full settings" aria-label="Open full settings" @click="openOptions()">
           <Setting />
-          <span>设置</span>
+          <span>Settings</span>
         </button>
       </div>
     </header>
@@ -30,13 +30,13 @@
         @click.self="closeDonation"
       >
         <section class="donation-card">
-          <button class="donation-close" type="button" aria-label="关闭赞赏页" @click="closeDonation">×</button>
+          <button class="donation-close" type="button" aria-label="Close support page" @click="closeDonation">×</button>
           <div class="donation-icon" aria-hidden="true"><Coffee /></div>
-          <span class="eyebrow">软件开源免费</span>
-          <h2 id="donation-title">如果你喜欢这款软件，</h2>
-          <p class="donation-description">可以扫描微信赞赏码支持作者，感谢鼓励。</p>
+          <span class="eyebrow">Free & open source</span>
+          <h2 id="donation-title">Enjoy reading with FluentRead?</h2>
+          <p class="donation-description">You can scan the WeChat QR code to support the author. Thank you!</p>
           <div class="donation-qr-frame">
-            <img src="/misc/approve.jpg" alt="流畅阅读赞赏码" />
+            <img src="/misc/approve.jpg" alt="FluentRead donation QR code" />
           </div>
         </section>
       </div>
@@ -45,22 +45,22 @@
     <section class="hero-card">
       <div class="hero-heading">
         <div>
-          <span class="eyebrow">网页翻译</span>
-          <h1>{{ config.on ? '让阅读自然地流动' : '翻译功能已暂停' }}</h1>
+          <span class="eyebrow">Webpage translation</span>
+          <h1>{{ config.on ? 'Let reading flow naturally' : 'Translation is paused' }}</h1>
         </div>
-        <button class="switch" type="button" role="switch" :aria-checked="config.on" :aria-label="config.on ? '暂停插件' : '启用插件'" @click="setPluginEnabled(!config.on)"><i /></button>
+        <button class="switch" type="button" role="switch" :aria-checked="config.on" :aria-label="config.on ? 'Pause the extension' : 'Enable the extension'" @click="setPluginEnabled(!config.on)"><i /></button>
       </div>
 
       <div class="language-pair">
         <label>
-          <span>源语言</span>
+          <span>Source language</span>
           <select v-model="config.from" :disabled="!config.on">
             <option v-for="item in options.form" :key="item.value" :value="item.value">{{ item.label }}</option>
           </select>
         </label>
         <span class="arrow">→</span>
         <label>
-          <span>目标语言</span>
+          <span>Target language</span>
           <select v-model="config.to" :disabled="!config.on">
             <option v-for="item in options.to" :key="item.value" :value="item.value">{{ item.label }}</option>
           </select>
@@ -74,22 +74,22 @@
           :disabled="!config.on"
           aria-haspopup="listbox"
           :aria-expanded="servicePickerOpen"
-          aria-label="翻译服务"
+          aria-label="Translation service"
           @click="toggleServicePicker"
         >
           <ServiceIcon :service="config.service" :label="serviceLabel" />
-          <span class="service-copy"><small>翻译服务</small><strong>{{ serviceLabel }}</strong></span>
+          <span class="service-copy"><small>Translation service</small><strong>{{ serviceLabel }}</strong></span>
           <span class="chevron" :class="{ open: servicePickerOpen }">⌄</span>
         </button>
 
-        <div v-if="servicePickerOpen" class="service-picker-panel" role="listbox" aria-label="翻译服务列表">
+        <div v-if="servicePickerOpen" class="service-picker-panel" role="listbox" aria-label="Translation services">
           <div class="service-picker-heading">
-            <div><strong>选择翻译服务</strong><small>常用服务优先，更多服务已收起</small></div>
+            <div><strong>Choose a translation service</strong><small>Popular services first, more available below</small></div>
             <span>{{ serviceOptions.length }}</span>
           </div>
 
           <div class="service-group">
-            <span class="service-group-label">常用服务</span>
+            <span class="service-group-label">Popular services</span>
             <button
               v-for="item in popularServiceOptions"
               :key="item.value"
@@ -107,8 +107,8 @@
           </div>
 
           <button class="service-more-toggle" type="button" :aria-expanded="moreServicesOpen" @click="moreServicesOpen = !moreServicesOpen">
-            <span>更多服务</span>
-            <span class="service-more-meta">{{ moreServiceOptions.length }} 项 <b :class="{ open: moreServicesOpen }">⌄</b></span>
+            <span>More services</span>
+            <span class="service-more-meta">{{ moreServiceOptions.length }} options <b :class="{ open: moreServicesOpen }">⌄</b></span>
           </button>
 
           <div v-if="moreServicesOpen" class="service-group service-group-more">
@@ -131,8 +131,8 @@
       </div>
 
       <div v-if="credentialWarning" class="credential-warning" role="alert">
-        <span><strong>配置提醒</strong>{{ credentialWarning }}</span>
-        <button type="button" @click="openOptions('settings-services')">去设置</button>
+        <span><strong>Setup reminder</strong>{{ credentialWarning }}</span>
+        <button type="button" @click="openOptions('settings-services')">Go to settings</button>
       </div>
 
       <button
@@ -144,40 +144,40 @@
         @click="togglePageTranslation"
       >
         <span v-if="translating" class="spinner" />
-        <span v-else class="translate-glyph">A↔译</span>
-        <span class="translate-label">{{ pageTranslated ? '恢复当前网页' : '翻译当前网页' }}</span>
-        <kbd class="translate-hotkey" :class="{ disabled: fullPageHotkey === '未设置' }">{{ fullPageHotkey }}</kbd>
+        <span v-else class="translate-glyph">A↔A</span>
+        <span class="translate-label">{{ pageTranslated ? 'Restore original page' : 'Translate current page' }}</span>
+        <kbd class="translate-hotkey" :class="{ disabled: fullPageHotkey === 'Not set' }">{{ fullPageHotkey }}</kbd>
       </button>
       <p v-if="notice" class="notice" :class="noticeType">{{ notice }}</p>
     </section>
 
     <section class="features">
-      <span class="eyebrow features-eyebrow">快捷功能</span>
+      <span class="eyebrow features-eyebrow">Quick actions</span>
       <div class="feature-grid">
         <button class="feature-card" type="button" :disabled="!config.on" @click="openDrawer('hover')">
           <span class="feature-icon rose">↖</span>
-          <span><strong>鼠标悬停翻译</strong><small>{{ hoverSummary }}</small></span>
+          <span><strong>Hover translation</strong><small>{{ hoverSummary }}</small></span>
           <i :class="{ active: config.hotkey !== 'none' }" />
         </button>
         <button class="feature-card" type="button" :disabled="!config.on" @click="openDrawer('selection')">
           <span class="feature-icon violet">I</span>
-          <span><strong>划词翻译</strong><small>{{ selectionSummary }}</small></span>
+          <span><strong>Selection translation</strong><small>{{ selectionSummary }}</small></span>
           <i :class="{ active: config.selectionTranslatorMode !== 'disabled' }" />
         </button>
         <button class="feature-card" type="button" :disabled="!config.on" @click="openDrawer('floating')">
           <span class="feature-icon blue">◉</span>
-          <span><strong>全文悬浮球</strong><small>{{ config.disableFloatingBall ? '已关闭' : floatingSummary }}</small></span>
+          <span><strong>Full-page floating ball</strong><small>{{ config.disableFloatingBall ? 'Off' : floatingSummary }}</small></span>
           <i :class="{ active: !config.disableFloatingBall }" />
         </button>
         <button class="feature-card" type="button" :disabled="!config.on" @click="openDrawer('appearance')">
           <span class="feature-icon amber">Aa</span>
-          <span><strong>译文显示</strong><small>{{ displaySummary }}</small></span>
+          <span><strong>Translation display</strong><small>{{ displaySummary }}</small></span>
           <b>›</b>
         </button>
         <button class="feature-card" type="button" :disabled="!config.on" @click="openDrawer('image')">
           <span class="feature-icon teal">▧</span>
           <span class="feature-copy">
-            <span class="feature-title"><strong>图片翻译</strong><em class="beta-badge">Beta 测试</em></span>
+            <span class="feature-title"><strong>Image translation</strong><em class="beta-badge">Beta</em></span>
             <small>{{ imageTranslationSummary }}</small>
           </span>
           <i :class="{ active: !config.disableImageTranslator }" />
@@ -185,7 +185,7 @@
         <button class="feature-card video-feature-card" data-feature="video-subtitle" type="button" :disabled="!config.on" @click="openDrawer('video')">
           <span class="feature-icon teal">CC</span>
           <span class="feature-copy">
-            <span class="feature-title"><strong>视频字幕</strong><em class="beta-badge">Beta 测试</em></span>
+            <span class="feature-title"><strong>Video subtitles</strong><em class="beta-badge">Beta</em></span>
             <small>{{ videoSummary }}</small>
           </span>
           <i :class="{ active: config.videoTranslationEnabled }" />
@@ -194,21 +194,21 @@
     </section>
 
     <footer>
-      <span>已完成 {{ config.count }} 次翻译</span>
+      <span>{{ config.count }} translations completed</span>
       <a
         class="opensource-link"
         href="https://github.com/Bistutu/FluentRead"
         target="_blank"
         rel="noreferrer"
-        aria-label="在 GitHub 查看流畅阅读开源项目"
+        aria-label="View the FluentRead open-source project on GitHub"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 .3a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.26c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .3" />
         </svg>
-        <span>开源项目</span>
+        <span>Open source</span>
         <span class="external-mark" aria-hidden="true">↗</span>
       </a>
-      <button type="button" :disabled="clearingCache" @click="clearCache">{{ clearingCache ? '清理中…' : '清除缓存' }}</button>
+      <button type="button" :disabled="clearingCache" @click="clearCache">{{ clearingCache ? 'Clearing…' : 'Clear cache' }}</button>
     </footer>
 
     <el-drawer
@@ -222,118 +222,118 @@
     >
       <div class="drawer-handle" />
       <header class="drawer-header">
-        <div><span class="eyebrow">快捷设置</span><h2>{{ drawerTitle }}</h2><p>{{ drawerDescription }}</p></div>
-        <button type="button" aria-label="关闭" @click="drawerVisible = false">×</button>
+        <div><span class="eyebrow">Quick settings</span><h2>{{ drawerTitle }}</h2><p>{{ drawerDescription }}</p></div>
+        <button type="button" aria-label="Close" @click="drawerVisible = false">×</button>
       </header>
 
       <div v-if="activeDrawer === 'hover'" class="drawer-content">
-        <div class="interaction-preview"><span class="cursor">↖</span><span>＋</span><kbd>{{ hoverKey }}</kbd><span>＝</span><strong>即时翻译</strong></div>
+        <div class="interaction-preview"><span class="cursor">↖</span><span>＋</span><kbd>{{ hoverKey }}</kbd><span>＝</span><strong>Instant translation</strong></div>
         <div class="setting-row">
-          <span><strong>启用鼠标悬停翻译</strong><small>按住快捷键并悬停在文本上</small></span>
-          <button class="switch compact" type="button" role="switch" :aria-checked="config.hotkey !== 'none'" aria-label="启用或关闭鼠标悬停翻译" @click="toggleHover"><i /></button>
+          <span><strong>Enable hover translation</strong><small>Hold the key and hover over text</small></span>
+          <button class="switch compact" type="button" role="switch" :aria-checked="config.hotkey !== 'none'" aria-label="Enable or disable hover translation" @click="toggleHover"><i /></button>
         </div>
         <div class="choice-block">
-          <label>触发快捷键</label>
+          <label>Trigger key</label>
           <div class="chips two">
             <button v-for="item in hoverChoices" :key="item.value" type="button" :class="{ selected: config.hotkey === item.value }" @click="setHoverHotkey(item.value)">{{ item.label }}</button>
           </div>
           <button v-if="config.hotkey === 'custom'" class="secondary-action" type="button" @click="showCustomMouseHotkeyDialog = true">
-            {{ config.customHotkey ? `当前：${config.customHotkey}` : '录制自定义快捷键' }}
+            {{ config.customHotkey ? `Current: ${config.customHotkey}` : 'Record custom key' }}
           </button>
         </div>
       </div>
 
       <div v-else-if="activeDrawer === 'selection'" class="drawer-content">
-        <div class="interaction-preview"><span class="selection-box">选择文字</span><span>＋</span><i class="pink-dot" /><span>＝</span><strong>翻译所选内容</strong></div>
+        <div class="interaction-preview"><span class="selection-box">Select text</span><span>＋</span><i class="pink-dot" /><span>＝</span><strong>Translate selection</strong></div>
         <div class="setting-row">
-          <span><strong>启用划词翻译</strong><small>选中文字后显示可操作的翻译入口</small></span>
-          <button class="switch compact" type="button" role="switch" :aria-checked="config.selectionTranslatorMode !== 'disabled'" aria-label="启用或关闭划词翻译" @click="setSelectionMode(config.selectionTranslatorMode === 'disabled' ? 'bilingual' : 'disabled')"><i /></button>
+          <span><strong>Enable selection translation</strong><small>Show a quick action after selecting text</small></span>
+          <button class="switch compact" type="button" role="switch" :aria-checked="config.selectionTranslatorMode !== 'disabled'" aria-label="Enable or disable selection translation" @click="setSelectionMode(config.selectionTranslatorMode === 'disabled' ? 'bilingual' : 'disabled')"><i /></button>
         </div>
         <div class="choice-block">
-          <label>显示方式</label>
+          <label>Display mode</label>
           <div class="chips two">
             <button v-for="item in selectionModes" :key="item.value" type="button" :class="{ selected: config.selectionTranslatorMode === item.value }" @click="setSelectionMode(item.value)">{{ item.label }}</button>
           </div>
         </div>
         <div class="choice-block">
-          <label>触发方式</label>
+          <label>Trigger</label>
           <div class="chips three">
             <button v-for="item in selectionTriggers" :key="item.value" type="button" :class="{ selected: config.selectionTranslatorTrigger === item.value }" @click="setSelectionTrigger(item.value)">{{ item.label }}</button>
           </div>
-          <small class="drawer-hint">图标和小点会固定显示在选区旁，不需要悬停才能发现。</small>
+          <small class="drawer-hint">The icon and dot stay pinned next to your selection, no hovering required.</small>
         </div>
       </div>
 
       <div v-else-if="activeDrawer === 'floating'" class="drawer-content">
         <div class="setting-row">
-          <span><strong>启用全文翻译悬浮球</strong><small>在页面边缘快速翻译或恢复全文</small></span>
-          <button class="switch compact" type="button" role="switch" :aria-checked="!config.disableFloatingBall" aria-label="启用或关闭全文翻译悬浮球" @click="setFloatingEnabled(config.disableFloatingBall)"><i /></button>
+          <span><strong>Enable full-page floating ball</strong><small>Translate or restore the whole page from the edge of the screen</small></span>
+          <button class="switch compact" type="button" role="switch" :aria-checked="!config.disableFloatingBall" aria-label="Enable or disable the full-page floating ball" @click="setFloatingEnabled(config.disableFloatingBall)"><i /></button>
         </div>
         <div class="choice-block">
-          <label>悬浮位置</label>
+          <label>Floating position</label>
           <div class="chips two">
-            <button type="button" :class="{ selected: config.floatingBallPosition === 'left' }" @click="config.floatingBallPosition = 'left'">页面左侧</button>
-            <button type="button" :class="{ selected: config.floatingBallPosition === 'right' }" @click="config.floatingBallPosition = 'right'">页面右侧</button>
+            <button type="button" :class="{ selected: config.floatingBallPosition === 'left' }" @click="config.floatingBallPosition = 'left'">Left edge</button>
+            <button type="button" :class="{ selected: config.floatingBallPosition === 'right' }" @click="config.floatingBallPosition = 'right'">Right edge</button>
           </div>
         </div>
         <label class="select-row">
-          <span><strong>全文翻译快捷键</strong><small>无需点击悬浮球即可切换</small></span>
+          <span><strong>Full-page translation hotkey</strong><small>Toggle without clicking the floating ball</small></span>
           <select v-model="config.floatingBallHotkey" @change="handleFloatingHotkeyChange">
             <option v-for="item in options.floatingBallHotkeys" :key="item.value" :value="item.value">{{ item.label }}</option>
           </select>
         </label>
         <button v-if="config.floatingBallHotkey === 'custom'" class="secondary-action" type="button" @click="showCustomHotkeyDialog = true">
-          {{ config.customFloatingBallHotkey ? `当前：${config.customFloatingBallHotkey}` : '录制自定义快捷键' }}
+          {{ config.customFloatingBallHotkey ? `Current: ${config.customFloatingBallHotkey}` : 'Record custom key' }}
         </button>
       </div>
 
       <div v-else-if="activeDrawer === 'image'" class="drawer-content">
         <div class="image-translation-preview">
-          <div class="image-translation-preview-art"><span>文字</span><b>文</b></div>
+          <div class="image-translation-preview-art"><span>Text</span><b>文</b></div>
           <div>
-            <span class="feature-title"><strong>悬停图片显示翻译入口</strong><em class="beta-badge">Beta 测试</em></span>
-            <small>点击图片右上角的小图标即可识别并翻译图片文字</small>
+            <span class="feature-title"><strong>Hover an image to reveal the translation entry</strong><em class="beta-badge">Beta</em></span>
+            <small>Click the small icon in the top-right corner of an image to recognize and translate its text</small>
           </div>
         </div>
         <div class="setting-row">
-          <span><strong>启用图片翻译</strong><small>在网页图片右上角显示“文”按钮</small></span>
-          <button class="switch compact" type="button" role="switch" :aria-checked="!config.disableImageTranslator" aria-label="启用或关闭图片翻译" @click="setImageTranslatorEnabled(config.disableImageTranslator)"><i /></button>
+          <span><strong>Enable image translation</strong><small>Show the “文” button on the top-right corner of web images</small></span>
+          <button class="switch compact" type="button" role="switch" :aria-checked="!config.disableImageTranslator" aria-label="Enable or disable image translation" @click="setImageTranslatorEnabled(config.disableImageTranslator)"><i /></button>
         </div>
       </div>
 
       <div v-else-if="activeDrawer === 'video'" class="drawer-content">
-        <div class="video-beta-banner"><span class="feature-icon teal">CC</span><span><strong>FluentRead · YouTube 字幕翻译</strong><small>Beta 测试 · 只处理播放器已经提供的字幕文本</small></span></div>
+        <div class="video-beta-banner"><span class="feature-icon teal">CC</span><span><strong>FluentRead · YouTube subtitle translation</strong><small>Beta · Only subtitle text already provided by the player is processed</small></span></div>
         <div class="setting-row">
-          <span><strong>启用视频字幕翻译</strong><small>在 YouTube 原生字幕下方显示中文译文</small></span>
-          <button class="switch compact" type="button" role="switch" :aria-checked="config.videoTranslationEnabled" aria-label="启用或关闭视频字幕翻译" @click="setVideoTranslationEnabled(!config.videoTranslationEnabled)"><i /></button>
+          <span><strong>Enable video subtitle translation</strong><small>Show translated subtitles below YouTube's native captions</small></span>
+          <button class="switch compact" type="button" role="switch" :aria-checked="config.videoTranslationEnabled" aria-label="Enable or disable video subtitle translation" @click="setVideoTranslationEnabled(!config.videoTranslationEnabled)"><i /></button>
         </div>
         <label class="select-row">
-          <span><strong>视频翻译服务</strong><small>与网页翻译服务独立保存</small></span>
+          <span><strong>Video translation service</strong><small>Saved independently from the page translation service</small></span>
           <select v-model="config.videoService" :disabled="!config.videoTranslationEnabled">
             <option v-for="item in videoServiceOptions" :key="item.value" :value="item.value">{{ item.label }}</option>
           </select>
         </label>
-        <small class="drawer-hint">目前支持 YouTube；播放器内会显示 FluentRead 图标，可切换字幕模式、显示状态和下载 SRT。视频默认使用微软翻译；AI 服务会提前预取字幕，如切换 DeepLX，可在完整设置中配置服务地址。</small>
+        <small class="drawer-hint">YouTube is currently supported. A FluentRead icon appears inside the player to switch subtitle mode, display state, and download SRT. Videos use Microsoft Translator by default; AI services prefetch subtitles ahead of time — if you switch to DeepLX, you can configure the service URL in the full settings.</small>
       </div>
 
       <div v-else class="drawer-content">
         <div class="choice-block">
-          <label>翻译模式</label>
+          <label>Translation mode</label>
           <div class="chips two">
             <button v-for="item in options.display" :key="item.value" type="button" :class="{ selected: config.display === item.value }" @click="config.display = item.value">{{ item.label }}</button>
           </div>
         </div>
         <label v-if="config.display === 1" class="select-row">
-          <span><strong>译文样式</strong><small>双语对照时译文的视觉效果</small></span>
+          <span><strong>Translation style</strong><small>Visual style of translations in bilingual mode</small></span>
           <select v-model.number="config.style"><option v-for="item in styleOptions" :key="item.value" :value="item.value">{{ item.label }}</option></select>
         </label>
         <label class="select-row">
-          <span><strong>界面主题</strong><small>同时应用到完整设置页面</small></span>
+          <span><strong>Interface theme</strong><small>Also applies to the full settings page</small></span>
           <select v-model="config.theme"><option v-for="item in options.theme" :key="item.value" :value="item.value">{{ item.label }}</option></select>
         </label>
       </div>
 
-      <button v-if="activeDrawer !== 'image'" class="drawer-settings-link" type="button" @click="openOptions(drawerSettingsSection[activeDrawer])">在完整设置中查看全部选项 ↗</button>
+      <button v-if="activeDrawer !== 'image'" class="drawer-settings-link" type="button" @click="openOptions(drawerSettingsSection[activeDrawer])">View all options in the full settings ↗</button>
     </el-drawer>
 
     <CustomHotkeyInput v-model="showCustomHotkeyDialog" :current-value="config.customFloatingBallHotkey" @confirm="confirmFloatingHotkey" @cancel="cancelFloatingHotkey" />
@@ -402,43 +402,43 @@ const styleOptions = computed(() => options.styles.filter((item: any) => !item.d
 const serviceLabel = computed(() => serviceOptions.value.find((item: any) => item.value === config.value.service)?.label || config.value.service);
 const credentialWarning = computed(() => getMissingCredentialMessage(config.value.service, config.value));
 const videoServiceLabel = computed(() => videoServiceOptions.value.find((item: any) => item.value === config.value.videoService)?.label || config.value.videoService);
-const styleLabel = computed(() => styleOptions.value.find((item: any) => item.value === config.value.style)?.label || '默认样式');
-const hoverKey = computed(() => config.value.hotkey === 'custom' ? (config.value.customHotkey || '自定义') : config.value.hotkey);
-const hoverSummary = computed(() => config.value.hotkey === 'none' ? '已关闭' : `${hoverKey.value} + 鼠标悬停`);
+const styleLabel = computed(() => styleOptions.value.find((item: any) => item.value === config.value.style)?.label || 'Default style');
+const hoverKey = computed(() => config.value.hotkey === 'custom' ? (config.value.customHotkey || 'Custom') : config.value.hotkey);
+const hoverSummary = computed(() => config.value.hotkey === 'none' ? 'Off' : `${hoverKey.value} + hover`);
 const fullPageHotkey = computed(() => {
   const hotkey = config.value.floatingBallHotkey === 'custom'
     ? config.value.customFloatingBallHotkey
     : config.value.floatingBallHotkey;
-  return hotkey && hotkey !== 'none' ? hotkey : '未设置';
+  return hotkey && hotkey !== 'none' ? hotkey : 'Not set';
 });
-const selectionSummary = computed(() => ({ disabled: '已关闭', bilingual: '双语显示', 'translation-only': '仅显示译文' }[config.value.selectionTranslatorMode] || '双语显示'));
-const floatingSummary = computed(() => `${config.value.floatingBallPosition === 'left' ? '页面左侧' : '页面右侧'} · ${fullPageHotkey.value}`);
-const displaySummary = computed(() => config.value.display === 1 ? `双语 · ${styleLabel.value}` : '仅显示译文');
-const imageTranslationSummary = computed(() => config.value.disableImageTranslator ? '已关闭' : '悬停图片');
-const videoSummary = computed(() => config.value.videoTranslationEnabled ? `${videoServiceLabel.value} · YouTube` : '已关闭');
-const drawerTitle = computed(() => ({ hover: '鼠标悬停翻译设置', selection: '划词翻译设置', floating: '全文悬浮球设置', appearance: '译文显示设置', image: '图片翻译设置', video: '视频字幕设置' }[activeDrawer.value]));
+const selectionSummary = computed(() => ({ disabled: 'Off', bilingual: 'Bilingual', 'translation-only': 'Translation only' }[config.value.selectionTranslatorMode] || 'Bilingual'));
+const floatingSummary = computed(() => `${config.value.floatingBallPosition === 'left' ? 'Left edge' : 'Right edge'} · ${fullPageHotkey.value}`);
+const displaySummary = computed(() => config.value.display === 1 ? `Bilingual · ${styleLabel.value}` : 'Translation only');
+const imageTranslationSummary = computed(() => config.value.disableImageTranslator ? 'Off' : 'Hover on an image');
+const videoSummary = computed(() => config.value.videoTranslationEnabled ? `${videoServiceLabel.value} · YouTube` : 'Off');
+const drawerTitle = computed(() => ({ hover: 'Hover translation settings', selection: 'Selection translation settings', floating: 'Floating ball settings', appearance: 'Translation display settings', image: 'Image translation settings', video: 'Video subtitle settings' }[activeDrawer.value]));
 const drawerDescription = computed(() => ({
-  hover: '把鼠标停在文本上，用轻量快捷键获取即时译文。',
-  selection: '选中文字后，按你的偏好显示原文与译文。',
-  floating: '把全文翻译入口固定在最顺手的位置。',
-  appearance: '调整双语布局、译文样式与界面主题。',
-  image: '把鼠标移到图片上，从图片右上角打开翻译入口。',
-  video: '在 YouTube 播放器中显示实时字幕译文。',
+  hover: 'Hover over text and use the lightweight key combo for instant translations.',
+  selection: 'Select text, then view the original and translation as you prefer.',
+  floating: 'Keep the full-page translation entry exactly where it feels most natural.',
+  appearance: 'Adjust the bilingual layout, translation style, and interface theme.',
+  image: 'Move the mouse over an image and open the translation entry from its top-right corner.',
+  video: 'Show real-time subtitle translations inside the YouTube player.',
 }[activeDrawer.value]));
 const hoverChoices = [
   { value: 'Control', label: 'Ctrl' },
   { value: 'Alt', label: 'Alt / Option' },
   { value: 'Shift', label: 'Shift' },
-  { value: 'custom', label: '自定义' },
+  { value: 'custom', label: 'Custom' },
 ];
 const selectionModes = [
-  { value: 'bilingual', label: '双语显示' },
-  { value: 'translation-only', label: '仅译文' },
+  { value: 'bilingual', label: 'Bilingual' },
+  { value: 'translation-only', label: 'Translation only' },
 ];
 const selectionTriggers = [
-  { value: 'direct', label: '直接弹出' },
-  { value: 'icon', label: '显示图标' },
-  { value: 'dot', label: '显示小点' },
+  { value: 'direct', label: 'Show immediately' },
+  { value: 'icon', label: 'Show icon' },
+  { value: 'dot', label: 'Show dot' },
 ];
 
 function applyTheme(theme: string) {
@@ -471,7 +471,7 @@ watch(config, async value => {
   const serialized = JSON.stringify(value);
   if (serialized === lastSerialized) return;
   lastSerialized = serialized;
-  await persistConfig(value).catch((error) => console.warn('[FluentRead] 保存 popup 设置失败', error));
+  await persistConfig(value).catch((error) => console.warn('[FluentRead] Failed to save popup settings', error));
 }, { deep: true, flush: 'sync' });
 watch(() => config.value.theme, theme => applyTheme(theme || 'auto'));
 darkMode.onchange = () => { if (config.value.theme === 'auto') applyTheme('auto'); };
@@ -522,8 +522,8 @@ window.addEventListener('pagehide', saveOnPageHide);
 function persistOnPageExit() {
   if (!hydrated.value || pageExitSaveStarted) return;
   pageExitSaveStarted = true;
-  void saveConfig(config.value).catch((error) => console.warn('[FluentRead] popup 关闭前本地保存设置失败', error));
-  void persistConfig(config.value).catch((error) => console.warn('[FluentRead] popup 关闭前后台保存设置失败', error));
+  void saveConfig(config.value).catch((error) => console.warn('[FluentRead] Failed to save settings locally before closing popup', error));
+  void persistConfig(config.value).catch((error) => console.warn('[FluentRead] Failed to save settings in background before closing popup', error));
 }
 
 function showNotice(message: string, type: 'success' | 'error' = 'success') {
@@ -576,10 +576,10 @@ async function togglePageTranslation() {
     const response = await browser.tabs.sendMessage(tab.id, { type: 'contextMenuTranslate', action }) as { status?: string } | undefined;
     if (response?.status !== 'success') throw new Error(response?.status === 'disabled' ? 'Plugin disabled' : 'Translation failed');
     pageTranslated.value = action === 'fullPage';
-    showNotice(pageTranslated.value ? '正在翻译当前网页' : '已恢复网页原文');
+    showNotice(pageTranslated.value ? 'Translating the current page…' : 'Restored the original page');
   } catch (error) {
     console.error(error);
-    showNotice('当前页面暂不支持翻译，请刷新后重试', 'error');
+    showNotice('This page cannot be translated right now. Please refresh and try again.', 'error');
   } finally { translating.value = false; }
 }
 
@@ -589,10 +589,10 @@ async function clearCache() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (!tab?.id) throw new Error('No active tab');
     await browser.tabs.sendMessage(tab.id, { message: 'clearCache' });
-    showNotice('全部翻译缓存已清除');
+    showNotice('All translation caches cleared');
   } catch (error) {
     console.error(error);
-    showNotice('缓存清除失败', 'error');
+    showNotice('Failed to clear cache', 'error');
   } finally { clearingCache.value = false; }
 }
 

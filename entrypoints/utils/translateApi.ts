@@ -1,6 +1,7 @@
 /**
- * 翻译API代理模块
- * 整合翻译队列管理，作为翻译函数和后台翻译服务之间的中间层
+ * Translation API proxy module.
+ * Integrates translation queue management as the middle layer between the
+ * translate functions and the background translation service.
  */
 
 import { enqueueTranslation, clearTranslationQueue } from './translateQueue';
@@ -11,7 +12,7 @@ import { resolveConfiguredModel, servicesType } from './option';
 import { getPageTranslationContext } from './pageContext';
 import { getMissingCredentialMessage } from './configValidation';
 
-// 调试相关
+// Debug
 const isDev = process.env.NODE_ENV === 'development';
 const VIDEO_COUNT_SAVE_INTERVAL = 10_000;
 let videoCountSaveTimer: ReturnType<typeof setTimeout> | undefined;
@@ -22,18 +23,19 @@ function scheduleVideoCountSave(): void {
 
   videoCountSaveTimer = setTimeout(() => {
     videoCountSaveTimer = undefined;
-    void saveConfig().catch((error) => console.error('[FluentRead] 保存视频翻译计数失败:', error));
+    void saveConfig().catch((error) => console.error('[FluentRead] Failed to save video translation count:', error));
   }, VIDEO_COUNT_SAVE_INTERVAL);
 }
 
 /**
- * 翻译API的统一入口
- * 所有翻译请求都应该通过此函数发送，以便集中管理队列和重试逻辑
- * 
- * @param origin 原始文本
- * @param context 上下文信息，通常是页面标题
- * @param options 翻译选项
- * @returns 翻译结果的Promise
+ * Unified entry point for the translation API.
+ * All translation requests should go through this function so the queue and
+ * retry logic are centrally managed.
+ *
+ * @param origin the original text
+ * @param context context information, usually the page title
+ * @param options translation options
+ * @returns a promise resolving to the translated result
  */
 export async function translateText(origin: string, context: string = document.title, options: TranslateOptions = {}): Promise<string> {
   const {
@@ -42,7 +44,7 @@ export async function translateText(origin: string, context: string = document.t
     timeout = 45000,
     useCache = config.useCache,
   } = options;
-  // 检查 origin 是否为空或只有空白字符
+  // Check whether origin is empty or only whitespace
   const cleanedOrigin = origin?.replace(/[\s\u3000]/g, '') || '';
   if (!cleanedOrigin || cleanedOrigin.length === 0) {
     return origin || '';
@@ -50,61 +52,63 @@ export async function translateText(origin: string, context: string = document.t
 
   assertTranslationCredentials();
 
-  // 如果目标语言与当前文本语言相同，直接返回原文
+  // If the target language equals the source text language, return the original
   if (detectlang(origin.replace(/[\s\u3000]/g, '')) === config.to) {
     return origin;
   }
 
   const pageContext = await resolvePageContext(options.pageContext);
 
-  // 增加翻译计数
+  // Increment the translation count
   config.count++;
-  // 保存配置以确保计数持久化
-  void saveConfig().catch((error) => console.error('[FluentRead] 保存翻译计数失败:', error));
+  // Save the config to persist the count
+  void saveConfig().catch((error) => console.error('[FluentRead] Failed to save translation count:', error));
 
-  // 使用队列处理翻译请求
+  // Route the translation request through the queue
   return enqueueTranslation(async () => {
-    // 创建翻译任务
+    // Create the translation task
     const translationTask = async (retryCount: number = 0): Promise<string> => {
       try {
-        // 发送翻译请求给background脚本处理
+        // Send the translation request to the background script
         const result = await Promise.race([
           browser.runtime.sendMessage({ context, pageContext, origin, useCache }),
           new Promise<never>((_, reject) => 
-            setTimeout(() => reject(new Error('翻译请求超时')), timeout)
+            setTimeout(() => reject(new Error('Translation request timed out')), timeout)
           )
         ]) as string;
 
-        // 如果翻译结果为空或与原文完全相同，直接返回原文
+        // If the result is empty or identical to the original, return the original
         if (!result || result === origin) {
           return origin;
         }
 
         return result;
       } catch (error) {
-        // 处理错误，根据重试策略决定是否重试
+        // Handle the error; retry according to the retry policy
         if (retryCount < maxRetries) {
           if (isDev) {
-            console.log(`[翻译API] 翻译失败，${retryCount + 1}/${maxRetries} 次重试，原因:`, error);
+            console.log(`[TranslateAPI] Translation failed, retrying ${retryCount + 1}/${maxRetries}, reason:`, error);
           }
           
-          // 等待一段时间后重试
+          // Wait before retrying
           await new Promise(resolve => setTimeout(resolve, retryDelay));
           return translationTask(retryCount + 1);
         }
         
-        // 超过最大重试次数，抛出异常
+        // Max retries exceeded, rethrow
         throw error;
       }
     };
 
-    // 开始执行翻译任务
+    // Start the translation task
     return translationTask();
   });
 }
 
 /**
- * 批量翻译纯文本片段。用于仅译文模式保留原始 DOM 结构，避免机器翻译接口修改标签和属性。
+ * Batch-translate plain text segments. Used in translation-only mode to preserve
+ * the original DOM structure and avoid machine translation APIs rewriting tags
+ * and attributes.
  */
 export async function translateTextBatch(
   origins: string[],
@@ -124,7 +128,7 @@ export async function translateTextBatch(
   const pageContext = await resolvePageContext(options.pageContext);
 
   config.count++;
-  void saveConfig().catch((error) => console.error('[FluentRead] 保存翻译计数失败:', error));
+  void saveConfig().catch((error) => console.error('[FluentRead] Failed to save translation count:', error));
 
   return enqueueTranslation(async () => {
     const translationTask = async (retryCount: number = 0): Promise<string[]> => {
@@ -132,12 +136,12 @@ export async function translateTextBatch(
         const result = await Promise.race([
           browser.runtime.sendMessage({ context, pageContext, origin: origins, useCache }),
           new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('翻译请求超时')), timeout)
+            setTimeout(() => reject(new Error('Translation request timed out')), timeout)
           )
         ]);
 
         if (!Array.isArray(result) || result.length !== origins.length || result.some(item => typeof item !== 'string')) {
-          throw new Error('批量翻译返回格式异常');
+          throw new Error('Batch translation returned an unexpected format');
         }
 
         return result as string[];
@@ -155,52 +159,54 @@ export async function translateTextBatch(
 }
 
 /**
- * 翻译视频字幕。视频字幕使用独立的服务配置，但仍通过 background
- * 统一请求、缓存和错误边界；只发送 YouTube 已提供的纯文本字幕内容。
+ * Translate video subtitles. Video subtitles use a dedicated service config but
+ * still go through the background script's unified requests, caching, and error
+ * handling; only the plain-text subtitles already provided by YouTube are sent.
  */
 export async function translateVideoText(origin: string): Promise<string> {
   const cleanedOrigin = origin?.replace(/[\s\u3000]/g, '') || '';
   if (!cleanedOrigin) return origin || '';
 
-  // 视频字幕是高频、短文本请求。计数保留在内存中，并合并为低频写入，避免
-  // storage 写入和配置订阅回调把播放器主线程拖入高频循环。
+  // Video subtitles are high-frequency, short-text requests. The count stays in
+  // memory and is flushed in low-frequency batches to keep storage writes and
+  // config subscription callbacks off the player's main thread.
   scheduleVideoCountSave();
   return enqueueTranslation(async () => {
     return Promise.race([
       browser.runtime.sendMessage({
-        context: `YouTube 视频字幕：${document.title}`,
+        context: `YouTube video subtitles: ${document.title}`,
         origin,
         useCache: config.useCache,
         serviceOverride: config.videoService,
       }),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('视频字幕翻译请求超时')), 20000)),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Video subtitle translation request timed out')), 20000)),
     ]) as Promise<string>;
   });
 }
 
 /**
- * 当用户离开页面或主动取消翻译时，清空翻译队列
+ * Clear the translation queue when the user leaves the page or cancels translation.
  */
 export function cancelAllTranslations() {
   if (isDev) {
-    console.log('[翻译API] 取消所有等待中的翻译任务');
+    console.log('[TranslateAPI] Cancelled all pending translation tasks');
   }
   clearTranslationQueue();
 }
 
 /**
- * 翻译参数接口
+ * Translation options interface
  */
 export interface TranslateOptions {
-  /** 最大重试次数 */
+  /** Maximum retry count */
   maxRetries?: number;
-  /** 重试间隔(毫秒) */
+  /** Retry delay (ms) */
   retryDelay?: number;
-  /** 超时时间(毫秒) */
+  /** Timeout (ms) */
   timeout?: number;
-  /** 是否使用缓存 */
+  /** Whether to use the cache */
   useCache?: boolean;
-  /** 发送给 LLM 的网页参考上下文；未提供时按当前页面自动提取。 */
+  /** Page reference context sent to the LLM; auto-extracted from the current page when omitted. */
   pageContext?: string;
 }
 

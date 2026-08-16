@@ -40,14 +40,14 @@ async function translateWithOffscreen(message: any): Promise<any> {
             if (typedResponse.success) {
                 return typedResponse.result;
             } else {
-                throw new Error(typedResponse.error || '翻译失败');
+                throw new Error(typedResponse.error || 'Translation failed');
             }
         }
 
-        throw new Error('无效的响应格式');
+        throw new Error('Invalid response format');
     } catch (error) {
         console.error('Offscreen 翻译失败:', error);
-        throw new Error(`Chrome Translation API 不可用：${error instanceof Error ? error.message : '未知错误'}`);
+        throw new Error(`Chrome Translation API unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }
 
@@ -73,7 +73,7 @@ async function ensureOffscreenDocument() {
         console.log('Offscreen 文档创建成功');
     } catch (error) {
         console.error('创建 offscreen 文档失败:', error);
-        throw new Error('无法创建 offscreen 文档');
+        throw new Error('Unable to create offscreen document');
     }
 }
 
@@ -96,7 +96,7 @@ export async function recognizeImageWithOffscreen(image: string, sourceLanguage:
     });
 
     if (response?.success) return response.lines || [];
-    throw new Error(response?.error || '图片 OCR 失败');
+    throw new Error(response?.error || 'Image OCR failed');
 }
 
 export async function translateImageWithOffscreen(
@@ -122,7 +122,7 @@ export async function translateImageWithOffscreen(
     });
 
     if (response?.success) return response;
-    throw new Error(response?.error || '图片翻译失败');
+    throw new Error(response?.error || 'Image translation failed');
 }
 
 export async function downloadImageOcrLanguagesWithOffscreen(languages: ImageOcrLanguageCode[]): Promise<void> {
@@ -141,7 +141,7 @@ export async function downloadImageOcrLanguagesWithOffscreen(languages: ImageOcr
         });
     });
 
-    if (!response?.success) throw new Error(response?.error || '图片 OCR 语言包下载失败');
+    if (!response?.success) throw new Error(response?.error || 'Failed to download the Image OCR language pack');
 }
 
 // 主翻译函数
@@ -152,7 +152,7 @@ export default async function chromeTranslator(message: any): Promise<any> {
     
     if (!text || typeof text !== 'string' || text.trim() === '') {
         // console.error('翻译文本为空或无效:', { text, type: typeof text, message });
-        throw new Error('翻译文本不能为空');
+        throw new Error('Text to translate cannot be empty');
     }
 
     // 检查是否在 background script 环境中

@@ -20,9 +20,9 @@
       v-if="showMenu"
       class="floating-ball-tool floating-ball-translate floating-ball-item"
       type="button"
-      :aria-label="isTranslating ? '恢复网页原文' : '翻译整个网页'"
+      :aria-label="isTranslating ? 'Restore original text' : 'Translate entire page'"
       :aria-pressed="isTranslating"
-      :title="isTranslating ? '恢复网页原文' : '翻译整个网页'"
+      :title="isTranslating ? 'Restore original text' : 'Translate entire page'"
       @pointerdown.stop
       @click.stop="toggleTranslation"
     >
@@ -38,7 +38,7 @@
       class="floating-ball-main floating-ball-item"
       role="img"
       aria-label="FluentRead"
-      title="按住拖动调整位置"
+      title="Drag to adjust position"
       @pointerdown="startDrag"
       @pointerup="finishPointerInteraction"
       @pointercancel="cancelPointerInteraction"
@@ -53,8 +53,8 @@
       v-if="showMenu"
       class="floating-ball-tool floating-ball-settings floating-ball-item"
       type="button"
-      aria-label="打开 FluentRead 设置"
-      title="打开设置"
+      aria-label="Open FluentRead settings"
+      title="Open settings"
       @pointerdown.stop
       @click.stop="handleSettingsClick"
     >
@@ -119,7 +119,7 @@ const internalPosition = ref<'left' | 'right' | null>(null);
 const isTranslating = ref(false);
 const floatingBall = ref<HTMLElement | null>(null);
 const showShortcutTooltip = ref(false);
-const shortcutTip = ref('快捷键：Alt+T');
+const shortcutTip = ref('Shortcut: Alt+T');
 const dragState = ref<PointerDragState | null>(null);
 const isAnimating = ref(false);
 let animationTimer: ReturnType<typeof setTimeout> | undefined;

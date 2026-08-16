@@ -30,7 +30,7 @@ async function deepl(message: any) {
         return result.translations[0].text
     } else {
         console.log(resp)
-        throw new Error(`翻译失败: ${resp.status} ${resp.statusText} 请检查 token 是否正确`);
+        throw new Error(`Translation failed: ${resp.status} ${resp.statusText}. Check if the token is correct.`);
     }
 }
 

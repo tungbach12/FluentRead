@@ -1,7 +1,7 @@
 import { services } from "./option";
 import {DEFAULT_DEEPLX_ENDPOINT} from "./deeplx";
 
-// 常量工具类
+// Constants helper
 export const urls: any = {
     [services.deepL]: "https://api-free.deepl.com/v2/translate",
     [services.deeplx]: DEFAULT_DEEPLX_ENDPOINT,
@@ -38,15 +38,15 @@ export const urls: any = {
 
 export const method = {POST: "POST", GET: "GET",};
 
-// qwen3.8 预览模型属于百炼 Token Plan，使用独立的 OpenAI 兼容端点。
+// The qwen3.8 preview model belongs to Bailian's Token Plan and uses a dedicated OpenAI-compatible endpoint.
 export const tongyiTokenPlanUrl = "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions";
 
 export const constants = {
-    // 键鼠事件
+    // Keyboard & mouse events
     DoubleClick: "DoubleClick",
     LongPress: "LongPress",
     MiddleClick: "MiddleClick",
-    // 触屏设备事件
+    // Touchscreen device events
     TwoFinger: "TwoFinger",
     ThreeFinger: "ThreeFinger",
     FourFinger: "FourFinger",
@@ -55,13 +55,13 @@ export const constants = {
 }
 
 export const styles = {
-    // 仅译文模式
+    // Translation only
     singleTranslation: 0,
-    // 双语对照模式
+    // Bilingual mode
     bilingualTranslation: 1,
 }
 
-// 右键菜单ID常量
+// Context menu ID constants
 export const CONTEXT_MENU_IDS = {
     TRANSLATE_FULL_PAGE: 'fluent-read-translate-full-page',
     RESTORE_ORIGINAL: 'fluent-read-restore-original',

@@ -31,7 +31,7 @@ export async function recognizeImageInExtension(image: string, sourceLanguage: s
     }) as ImageOcrResponse | undefined;
 
     if (!response?.success) {
-        throw new Error(response?.error || '图片 OCR 服务不可用');
+        throw new Error(response?.error || 'Image OCR service unavailable');
     }
 
     return response.lines || [];
@@ -50,7 +50,7 @@ export async function translateImageInExtension(
     }) as ImageTranslationResponse | undefined;
 
     if (!response?.success || !response.image || !Array.isArray(response.lines)) {
-        throw new Error(response?.error || '图片翻译服务不可用');
+        throw new Error(response?.error || 'Image translation service unavailable');
     }
 
     return { image: response.image, lines: response.lines };
@@ -63,7 +63,7 @@ export async function fetchImageInExtension(imageUrl: string): Promise<string> {
     }) as ImageFetchResponse | undefined;
 
     if (!response?.success || !response.image) {
-        throw new Error(response?.error || '无法读取远程图片');
+        throw new Error(response?.error || 'Unable to read the remote image');
     }
 
     return response.image;

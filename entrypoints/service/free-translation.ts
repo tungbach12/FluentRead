@@ -10,14 +10,14 @@ type FreeTranslationProvider = {
 };
 
 export const FREE_TRANSLATION_ORDER = [
-    "微软翻译",
+    "Microsoft Translator",
     "DeepLX",
-    "谷歌翻译",
+    "Google Translate",
 ] as const;
 
 function requireTranslation(text: string, label: string): string {
     if (typeof text !== "string" || text.trim().length === 0) {
-        throw new Error(`${label}未返回有效译文`);
+        throw new Error(`${label} returned no valid translation`);
     }
     return text;
 }
@@ -46,7 +46,7 @@ function getErrorMessage(error: unknown): string {
 
 export async function translateFreeText(text: string): Promise<string> {
     if (typeof text !== "string") {
-        throw new Error("免费翻译服务仅支持文本输入");
+        throw new Error("Free translation service supports text input only");
     }
 
     const failures: string[] = [];
@@ -58,7 +58,7 @@ export async function translateFreeText(text: string): Promise<string> {
         }
     }
 
-    throw new Error(`免费翻译服务均不可用（${FREE_TRANSLATION_ORDER.join(" → ")}）：${failures.join("；")}`);
+    throw new Error(`All free translation services are unavailable (${FREE_TRANSLATION_ORDER.join(" → ")}): ${failures.join("; ")}`);
 }
 
 async function freeTranslation(message: {origin: string | string[]}) {
@@ -70,7 +70,7 @@ async function freeTranslation(message: {origin: string | string[]}) {
         return Promise.all(message.origin.map(text => translateFreeText(text)));
     }
 
-    throw new Error("免费翻译服务仅支持文本输入");
+    throw new Error("Free translation service supports text input only");
 }
 
 export default freeTranslation;

@@ -47,18 +47,18 @@ export async function translateMicrosoftTexts(
     });
 
     if (!resp.ok) {
-        throw new Error(`翻译失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+        throw new Error(`Translation failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
     }
 
     const result = await resp.json() as MicrosoftTranslation[];
     if (!Array.isArray(result) || result.length !== texts.length) {
-        throw new Error(`微软翻译返回数量异常: 期望 ${texts.length} 条，实际 ${Array.isArray(result) ? result.length : 0} 条`);
+        throw new Error(`Microsoft Translator returned an unexpected item count: expected ${texts.length}, got ${Array.isArray(result) ? result.length : 0}`);
     }
 
     return result.map((item, index) => {
         const translatedText = item?.translations?.[0]?.text;
         if (typeof translatedText !== 'string') {
-            throw new Error(`微软翻译第 ${index + 1} 条结果缺少译文`);
+            throw new Error(`Microsoft Translator result #${index + 1} is missing its translation`);
         }
         return decodeHtmlText(translatedText);
     });
@@ -73,7 +73,7 @@ async function microsoft(message: {origin: string | string[]}) {
 
     const translatedText = translations[0];
     if (translatedText === undefined) {
-        throw new Error('微软翻译未返回译文');
+        throw new Error('Microsoft Translator returned no translation');
     }
     return translatedText;
 }

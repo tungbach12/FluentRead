@@ -5,11 +5,11 @@ export function normalizeRemoteImageUrl(source: string): string {
     try {
         url = new URL(source);
     } catch {
-        throw new Error('图片地址无效');
+        throw new Error('Invalid image URL');
     }
 
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-        throw new Error('只支持网页图片地址');
+        throw new Error('Only web image URLs are supported');
     }
 
     return url.href;
@@ -17,12 +17,12 @@ export function normalizeRemoteImageUrl(source: string): string {
 
 export function imageBufferToDataUrl(buffer: ArrayBuffer, contentType: string): string {
     if (buffer.byteLength > MAX_REMOTE_IMAGE_BYTES) {
-        throw new Error('图片文件过大');
+        throw new Error('Image file is too large');
     }
 
     const mimeType = contentType.split(';', 1)[0]?.trim().toLowerCase();
     if (!mimeType?.startsWith('image/')) {
-        throw new Error('远程地址不是图片');
+        throw new Error('The remote URL is not an image');
     }
 
     const bytes = new Uint8Array(buffer);

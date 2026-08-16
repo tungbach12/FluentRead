@@ -20,14 +20,14 @@ export function checkConfig(): boolean {
         const model = config.model[config.service];
         const customModel = config.customModel[config.service];
         if (!model || (model === customModelString && !customModel)) {
-            sendErrorMessage("模型尚未配置，请前往设置页配置");
+            sendErrorMessage("The model is not configured. Go to the settings page to configure it.");
             return false;
         }
     }
 
     // Some translation services require "bilingual mode" to be enabled
     if (config.display === 0 && config.service === services.google) {
-        sendErrorMessage("「谷歌翻译」仅支持双语模式，请切换翻译服务");
+        sendErrorMessage("Google Translate supports bilingual mode only. Switch to another translation service.");
         return false;
     }
 

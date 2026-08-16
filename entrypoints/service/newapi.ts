@@ -13,7 +13,7 @@ async function newapi(message: any) {
         let url = config.newApiUrl
 
         if (!url) {
-            throw new Error('New API地址未配置');
+            throw new Error('New API URL is not configured');
         }
 
         if (url.endsWith('/')) {
@@ -34,7 +34,7 @@ async function newapi(message: any) {
         });
 
         if (!resp.ok) {
-            throw new Error(`翻译失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+            throw new Error(`Translation failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
         }
 
         const result = await resp.json();
@@ -43,7 +43,7 @@ async function newapi(message: any) {
             return contentPostHandler(result.choices[0].message.content);
         }
 
-        throw new Error('翻译失败: 上游未返回内容');
+        throw new Error('Translation failed: upstream returned no content');
     } catch (error) {
         console.error('API调用失败:', error);
         throw error;

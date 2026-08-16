@@ -1,42 +1,42 @@
 <template>
   <div v-show="showIndicator || showTooltip || copySuccess" class="fr-selection-translator-root" @pointerdown.stop>
-    <button v-if="showIndicator && !showTooltip" class="fr-selection-indicator" :class="`fr-selection-indicator--${triggerMode}`" :style="indicatorStyle" type="button" aria-label="打开划词翻译" title="打开划词翻译" @pointerdown.prevent.stop @click="openTooltip">
+    <button v-if="showIndicator && !showTooltip" class="fr-selection-indicator" :class="`fr-selection-indicator--${triggerMode}`" :style="indicatorStyle" type="button" aria-label="Open selection translation" title="Open selection translation" @pointerdown.prevent.stop @click="openTooltip">
       <span class="fr-selection-indicator-glyph" aria-hidden="true">↗</span>
     </button>
 
-    <section v-if="showTooltip" ref="tooltip-ref" class="fr-translation-tooltip" :class="{ 'fr-dark-theme': isDarkTheme }" :data-placement="popupPlacement" :style="tooltipStyle" role="dialog" aria-label="划词翻译结果" @pointerdown.prevent.stop>
+    <section v-if="showTooltip" ref="tooltip-ref" class="fr-translation-tooltip" :class="{ 'fr-dark-theme': isDarkTheme }" :data-placement="popupPlacement" :style="tooltipStyle" role="dialog" aria-label="Selection translation result" @pointerdown.prevent.stop>
       <header class="fr-tooltip-header">
-        <div class="fr-tooltip-title"><span>翻译结果</span><small>via FluentRead</small></div>
+        <div class="fr-tooltip-title"><span>Translation</span><small>via FluentRead</small></div>
         <div class="fr-tooltip-actions">
-          <button class="fr-action-btn" type="button" title="复制译文" aria-label="复制译文" @click="copyTranslation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg></button>
-          <button class="fr-close-btn" type="button" title="关闭" aria-label="关闭翻译结果" @click="closeTooltip">×</button>
+          <button class="fr-action-btn" type="button" title="Copy translation" aria-label="Copy translation" @click="copyTranslation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg></button>
+          <button class="fr-close-btn" type="button" title="Close" aria-label="Close translation result" @click="closeTooltip">×</button>
         </div>
       </header>
 
       <div class="fr-tooltip-content" aria-live="polite">
-        <div v-if="isLoading" class="fr-loading-state"><span :class="['fr-loading-spinner', { 'fr-static': !config.animations }]" aria-hidden="true" /><span>正在翻译…</span></div>
-        <div v-else-if="error" class="fr-error-state"><span>{{ error }}</span><button type="button" @click="retryTranslation">重试</button></div>
+        <div v-if="isLoading" class="fr-loading-state"><span :class="['fr-loading-spinner', { 'fr-static': !config.animations }]" aria-hidden="true" /><span>Translating…</span></div>
+        <div v-else-if="error" class="fr-error-state"><span>{{ error }}</span><button type="button" @click="retryTranslation">Retry</button></div>
         <div v-else class="fr-translation-container">
           <div v-if="config.selectionTranslatorMode === 'bilingual'" class="fr-text-block fr-original-text">
-            <div class="fr-text-label">原文</div><pre>{{ selectedText }}</pre>
+            <div class="fr-text-label">Original</div><pre>{{ selectedText }}</pre>
             <button class="fr-text-audio-btn" type="button" :aria-label="audioLabel('source')" :title="audioLabel('source')" @click="toggleAudio(selectedText, 'source')">
               <svg v-if="isCurrentAudio('source')" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6v12M16 6v12" /></svg>
               <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" /><path d="M16 9.5a4.5 4.5 0 0 1 0 5M18.5 7a8 8 0 0 1 0 10" /></svg>
             </button>
           </div>
           <div v-if="config.selectionTranslatorMode === 'bilingual' || config.selectionTranslatorMode === 'translation-only'" class="fr-text-block fr-translation-result">
-            <div class="fr-text-label">译文</div><pre>{{ translationResult }}</pre>
+            <div class="fr-text-label">Translation</div><pre>{{ translationResult }}</pre>
             <button class="fr-text-audio-btn" type="button" :aria-label="audioLabel('translation')" :title="audioLabel('translation')" @click="toggleAudio(translationResult, 'translation')">
               <svg v-if="isCurrentAudio('translation')" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6v12M16 6v12" /></svg>
               <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" /><path d="M16 9.5a4.5 4.5 0 0 1 0 5M18.5 7a8 8 0 0 1 0 10" /></svg>
             </button>
           </div>
-          <div v-if="isPlaying" class="fr-playing-status"><span>正在播放{{ currentAudioKind === 'source' ? '原文' : '译文' }}</span><button type="button" aria-label="停止播放" title="停止播放" @click="stopAudio">停止</button></div>
+          <div v-if="isPlaying" class="fr-playing-status"><span>Playing {{ currentAudioKind === 'source' ? 'original' : 'translation' }}</span><button type="button" aria-label="Stop playback" title="Stop playback" @click="stopAudio">Stop</button></div>
         </div>
       </div>
     </section>
 
-    <div v-if="copySuccess" class="fr-copy-success-toast" :class="{ 'fr-dark-theme': isDarkTheme }" role="status">已复制译文</div>
+    <div v-if="copySuccess" class="fr-copy-success-toast" :class="{ 'fr-dark-theme': isDarkTheme }" role="status">Translation copied</div>
   </div>
 </template>
 
@@ -189,7 +189,7 @@ async function requestTranslation(text: string): Promise<void> {
   } catch (cause) {
     if (requestId !== translationRequestId || snapshot.value?.text !== text) return;
     console.error('Selection translation error:', cause);
-    error.value = '翻译失败，请重试';
+    error.value = 'Translation failed. Please try again.';
   } finally {
     if (requestId === translationRequestId) isLoading.value = false;
   }
@@ -229,7 +229,7 @@ function selectVoice(language: string): SpeechSynthesisVoice | undefined {
 }
 
 function isCurrentAudio(kind: AudioKind): boolean { return isPlaying.value && currentAudioKind.value === kind; }
-function audioLabel(kind: AudioKind): string { return isCurrentAudio(kind) ? `停止播放${kind === 'source' ? '原文' : '译文'}` : `播放${kind === 'source' ? '原文' : '译文'}`; }
+function audioLabel(kind: AudioKind): string { return isCurrentAudio(kind) ? `Stop playing ${kind === 'source' ? 'original' : 'translation'}` : `Play ${kind === 'source' ? 'original' : 'translation'}`; }
 
 function stopAudio(): void {
   audioRequestId += 1;

@@ -72,7 +72,7 @@ export function parseHotkey(hotkeyString: string): ParsedHotkey {
       key: '',
       isValid: false,
       displayName: '',
-      errorMessage: '快捷键不能为空'
+      errorMessage: 'Shortcut cannot be empty'
     };
   }
 
@@ -84,7 +84,7 @@ export function parseHotkey(hotkeyString: string): ParsedHotkey {
       key: '',
       isValid: false,
       displayName: '',
-      errorMessage: '无效的快捷键格式'
+      errorMessage: 'Invalid shortcut format'
     };
   }
 
@@ -105,7 +105,7 @@ export function parseHotkey(hotkeyString: string): ParsedHotkey {
           key: part,
           isValid: false,
           displayName: '',
-          errorMessage: `不支持的按键: ${part}`
+          errorMessage: `Unsupported key: ${part}`
         };
       }
     } else {
@@ -127,7 +127,7 @@ export function parseHotkey(hotkeyString: string): ParsedHotkey {
           key,
           isValid: false,
           displayName: '',
-          errorMessage: `不支持的修饰键: ${part}`
+          errorMessage: `Unsupported modifier key: ${part}`
         };
       }
     }
@@ -140,7 +140,7 @@ export function parseHotkey(hotkeyString: string): ParsedHotkey {
       key,
       isValid: false,
       displayName: '',
-      errorMessage: '单个字母键需要与修饰键组合使用'
+      errorMessage: 'A single letter key must be combined with a modifier key'
     };
   }
 
@@ -151,7 +151,7 @@ export function parseHotkey(hotkeyString: string): ParsedHotkey {
       key,
       isValid: false,
       displayName: '',
-      errorMessage: 'CMD 键已被禁用，请使用其他修饰键组合'
+      errorMessage: 'CMD key is disabled. Please use another modifier key combination'
     };
   }
 
@@ -272,8 +272,8 @@ export function validateHotkeyConflicts(parsedHotkey: ParsedHotkey): {
   // 常见的系统快捷键冲突检测
   const commonConflicts = [
     // Windows/Linux 系统快捷键
-    { modifiers: ['ctrl'], key: 'c', desc: '复制' },
-    { modifiers: ['ctrl'], key: 'v', desc: '粘贴' },
+    { modifiers: ['ctrl'], key: 'c', desc: 'Copy' },
+    { modifiers: ['ctrl'], key: 'v', desc: 'Paste' },
     { modifiers: ['ctrl'], key: 'x', desc: '剪切' },
     { modifiers: ['ctrl'], key: 'z', desc: '撤销' },
     { modifiers: ['ctrl'], key: 'y', desc: '重做' },
@@ -293,8 +293,8 @@ export function validateHotkeyConflicts(parsedHotkey: ParsedHotkey): {
     { modifiers: ['ctrl', 'shift'], key: 'delete', desc: '清除浏览数据' },
     
     // macOS 系统快捷键
-    { modifiers: ['meta'], key: 'c', desc: '复制' },
-    { modifiers: ['meta'], key: 'v', desc: '粘贴' },
+    { modifiers: ['meta'], key: 'c', desc: 'Copy' },
+    { modifiers: ['meta'], key: 'v', desc: 'Paste' },
     { modifiers: ['meta'], key: 'x', desc: '剪切' },
     { modifiers: ['meta'], key: 'z', desc: '撤销' },
     { modifiers: ['meta'], key: 'a', desc: '全选' },

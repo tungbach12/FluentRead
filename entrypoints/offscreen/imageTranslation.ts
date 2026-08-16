@@ -13,7 +13,7 @@ function loadImage(dataUrl: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
         const source = new Image();
         source.onload = () => resolve(source);
-        source.onerror = () => reject(new Error('图片数据无法解码'));
+        source.onerror = () => reject(new Error('Image data could not be decoded'));
         source.src = dataUrl;
     });
 }
@@ -125,7 +125,7 @@ async function translateTexts(texts: string[], title: string): Promise<string[]>
         });
     });
     if (!response?.success || !Array.isArray(response.translations)) {
-        throw new Error(response?.error || '图片文字翻译失败');
+        throw new Error(response?.error || 'Image text translation failed');
     }
     return response.translations;
 }
@@ -141,7 +141,7 @@ async function prepareTranslatedImage(
     canvas.height = source.naturalHeight || source.height;
     const context = canvas.getContext('2d');
     if (!context || !canvas.width || !canvas.height) {
-        throw new Error('浏览器不支持图片处理');
+        throw new Error('This browser does not support image processing');
     }
 
     context.drawImage(source, 0, 0, canvas.width, canvas.height);
@@ -153,7 +153,7 @@ async function prepareTranslatedImage(
         return normalizedOriginal === normalizedTranslation ? [] : [{ ...line, text }];
     });
     if (translatedLines.length === 0) {
-        throw new Error('图片中没有需要翻译的文字');
+        throw new Error('No translatable text found in the image');
     }
     const pixels = inpaintTextRegions(sourcePixels.data, canvas.width, canvas.height, translatedLines);
     sourcePixels.data.set(pixels);

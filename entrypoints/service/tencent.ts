@@ -92,12 +92,12 @@ async function tencent(message: any) {
         const secretKey = config.tencentSecretKey?.trim();
         
         if (!secretId || !secretKey) {
-            throw new Error('腾讯云机器翻译密钥未配置，请在设置中配置SecretId和SecretKey');
+            throw new Error('Tencent Cloud machine translation keys are not configured. Set SecretId and SecretKey in Settings.');
         }
         
         // 基本格式验证
         if (secretId.length < 10 || secretKey.length < 10) {
-            throw new Error('SecretId或SecretKey格式不正确，请检查是否完整复制了密钥信息');
+            throw new Error('SecretId or SecretKey format is incorrect. Check that you copied the key information completely.');
         }
         
         // 转换语言代码
@@ -105,7 +105,7 @@ async function tencent(message: any) {
         const targetLang = languageMap[config.to] || config.to;
         
         if (!targetLang || targetLang === 'auto') {
-            throw new Error('腾讯云机器翻译不支持目标语言自动检测');
+            throw new Error('Tencent Cloud machine translation does not support automatic target language detection.');
         }
         
         // 构建JSON请求体
@@ -141,21 +141,21 @@ async function tencent(message: any) {
         
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`腾讯云机器翻译请求失败: ${response.status} ${response.statusText}\n${errorText}`);
+            throw new Error(`Tencent Cloud translation request failed: ${response.status} ${response.statusText}\n${errorText}`);
         }
         
         const result = await response.json();
         
         // 检查是否有错误
         if (result.Response?.Error) {
-            throw new Error(`腾讯云机器翻译错误: ${result.Response.Error.Code} - ${result.Response.Error.Message}`);
+            throw new Error(`Tencent Cloud translation error: ${result.Response.Error.Code} - ${result.Response.Error.Message}`);
         }
         
         // 返回翻译结果
         if (result.Response?.TargetText) {
             return result.Response.TargetText;
         } else {
-            throw new Error('腾讯云机器翻译返回格式异常');
+            throw new Error('Tencent Cloud translation returned an unexpected format');
         }
         
     } catch (error) {

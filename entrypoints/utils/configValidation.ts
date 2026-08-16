@@ -38,18 +38,18 @@ export function getMissingCredentialMessage(
 
     if (servicesType.isUseToken(service) && service !== services.deeplx && isApiKeyRequired(service, config)) {
         if (!config.token?.[service]?.trim()) {
-            return `${serviceLabel} 需要 API Key（访问令牌），当前尚未配置；请先在设置中填写，再开始翻译。`;
+            return `${serviceLabel} requires an API Key (access token) which is not configured yet. Enter it in Settings before translating.`;
         }
     }
 
     if (service === services.youdao
         && (!config.youdaoAppKey?.trim() || !config.youdaoAppSecret?.trim())) {
-        return `${serviceLabel} 需要 App Key 和 App Secret，当前尚未完整配置；请先在设置中填写，再开始翻译。`;
+        return `${serviceLabel} requires App Key and App Secret which are not fully configured yet. Enter them in Settings before translating.`;
     }
 
     if (service === services.tencent
         && (!config.tencentSecretId?.trim() || !config.tencentSecretKey?.trim())) {
-        return `${serviceLabel} 需要 SecretId 和 SecretKey，当前尚未完整配置；请先在设置中填写，再开始翻译。`;
+        return `${serviceLabel} requires SecretId and SecretKey which are not fully configured yet. Enter them in Settings before translating.`;
     }
 
     return null;

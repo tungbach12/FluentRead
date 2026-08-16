@@ -26,11 +26,11 @@ async function coze( message: any) {
             console.log(result.messages[0])
             return result.messages[0].content;
         } else {
-            throw new Error(`请求失败: ${result.msg}`);
+            throw new Error(`Request failed: ${result.msg}`);
         }
     } else {
         console.log(resp);
-        throw new Error(`请求失败: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
+        throw new Error(`Request failed: ${resp.status} ${resp.statusText} body: ${await resp.text()}`);
     }
 }
 

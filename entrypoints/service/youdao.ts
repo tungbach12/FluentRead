@@ -13,7 +13,7 @@ interface YoudaoResponse {
 async function youdao(message: any): Promise<string> {
   // 检查必需的配置
   if (!config.youdaoAppKey || !config.youdaoAppSecret) {
-    throw new Error('请先配置有道翻译的 App Key 和 App Secret');
+    throw new Error('Please configure Youdao Translate App Key and App Secret first');
   }
 
   const appKey = config.youdaoAppKey;
@@ -131,13 +131,13 @@ async function youdao(message: any): Promise<string> {
     // 处理错误码
     if (result.errorCode !== '0') {
       const errorMessages: { [key: string]: string } = {
-        '101': '缺少必填的参数',
-        '102': '不支持的语言类型',
-        '103': '翻译文本过长',
-        '104': '不支持的API类型',
-        '105': '不支持的签名类型',
-        '106': '不支持的响应类型',
-        '107': '不支持的传输加密类型',
+        '101': 'Missing required parameters',
+        '102': 'Unsupported language type',
+        '103': 'Text is too long to translate',
+        '104': 'Unsupported API type',
+        '105': 'Unsupported signature type',
+        '106': 'Unsupported response type',
+        '107': 'Unsupported transfer encryption type',
         '108': 'appKey无效',
         '109': 'batchLog格式不正确',
         '110': '无相关服务的有效实例',

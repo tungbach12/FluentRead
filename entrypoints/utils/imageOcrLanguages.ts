@@ -13,8 +13,8 @@ export const IMAGE_OCR_LANGUAGE_STATE_KEY = 'fluentReadImageOcrLanguages';
 export const IMAGE_OCR_LANGUAGE_PACKS: ImageOcrLanguagePack[] = [
     {
         code: 'chi_sim',
-        label: '简体中文',
-        description: '识别中文界面、截图和图片文字',
+        label: 'Simplified Chinese',
+        description: 'Recognize Chinese text in UIs, screenshots and images',
         size: '约 20 MB',
         recommended: true,
     },

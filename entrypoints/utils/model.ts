@@ -9,66 +9,66 @@ interface IMapping {
     [key: string]: string;
 }
 
-// 内包，存储额外信息
+// Extra info stored internally
 interface IExtra {
     [key: string]: any
 }
 
 export class Config {
-    on: boolean; // 是否开启
-    autoTranslate: boolean; // 是否即时翻译
+    on: boolean; // Whether the extension is on
+    autoTranslate: boolean; // Whether to translate instantly
     from: string;
     to: string;
     hotkey: string;
     style: number;
     display: number = 1;
     service: string;
-    videoTranslationEnabled: boolean; // 是否启用视频字幕翻译 Beta
-    videoService: string; // 视频字幕独立翻译服务
-    videoServiceDefaultMigrated: boolean; // 是否已迁移视频字幕默认服务
-    videoSubtitleVisible: boolean; // 是否显示 FluentRead 视频字幕
-    videoSubtitleDisplayMode: VideoSubtitleDisplayMode; // 视频字幕显示模式
+    videoTranslationEnabled: boolean; // Whether video subtitle translation (Beta) is enabled
+    videoService: string; // Dedicated video subtitle translation service
+    videoServiceDefaultMigrated: boolean; // Whether the video subtitle default service has been migrated
+    videoSubtitleVisible: boolean; // Whether FluentRead video subtitles are shown
+    videoSubtitleDisplayMode: VideoSubtitleDisplayMode; // Video subtitle display mode
     token: IMapping;
-    requireApiKey: Record<string, boolean>; // 按服务和模型保存 API Key 校验开关
+    requireApiKey: Record<string, boolean>; // Per-service and per-model API key validation switches
     ak: string;
     sk: string;
     appid: string;
     key: string;
     model: IMapping;
-    customModel: IMapping;  // 自定义模型名称
-    customBody: IMapping;  // 自定义请求体（JSON 字符串，按服务存储），会合并进请求体
-    proxy: IMapping;  // 代理地址
-    custom: string; // 本地服务地址
-    extra: IExtra;  // 额外信息（内包信息）
-    robot_id: IMapping;  // 机器人 ID（兼容 coze）
+    customModel: IMapping;  // Custom model name
+    customBody: IMapping;  // Custom request body (JSON string, stored per service), merged into the request body
+    proxy: IMapping;  // Proxy address
+    custom: string; // Local service address
+    extra: IExtra;  // Additional (internal) info
+    robot_id: IMapping;  // Bot ID (Coze-compatible)
     system_role: IMapping;
     user_role: IMapping;
-    count: number;  // 翻译次数
-    theme: string;  // 主题模式：'auto' | 'light' | 'dark'
-    useCache: boolean; // 是否使用缓存
-    enableAIContext: boolean; // 是否为 AI 翻译附加网页上下文
-    disableFloatingBall: boolean; // 是否禁用悬浮球
-    floatingBallPosition: 'left' | 'right'; // 悬浮球位置
-    floatingBallHotkey: string; // 悬浮球快捷键
-    customFloatingBallHotkey: string; // 自定义悬浮球快捷键
-    customHotkey: string; // 自定义鼠标悬浮快捷键
-    disableSelectionTranslator: boolean; // 是否禁用划词翻译
-    disableImageTranslator: boolean; // 是否禁用图片翻译
-    deeplx: string; // DeepLX 服务地址
-    selectionTranslatorMode: string; // 划词翻译显示模式: 'disabled' | 'bilingual' | 'translation-only'
-    selectionTranslatorTrigger: string; // 划词翻译触发方式: 'direct' | 'icon' | 'dot'
-    newApiUrl: string; // NewAPI地址
-    maxConcurrentTranslations: number; // 最大并发翻译数量
-    youdaoAppKey: string; // 有道翻译 App Key
-    youdaoAppSecret: string; // 有道翻译 App Secret
-    tencentSecretId: string; // 腾讯云 Secret ID
-    tencentSecretKey: string; // 腾讯云 Secret Key
-    azureOpenaiEndpoint: string; // Azure OpenAI 端点地址
-    animations: boolean; // 是否启用动画效果
-    inputBoxTranslationTrigger: string; // 输入框翻译触发方式
-    inputBoxTranslationTarget: string; // 输入框翻译目标语言
-    deepseekApiType: DeepSeekApiType; // DeepSeek API 格式
-    deepseekThinkingMode: DeepSeekThinkingMode; // DeepSeek Chat Completion 思考模式
+    count: number;  // Translation count
+    theme: string;  // Theme mode: 'auto' | 'light' | 'dark'
+    useCache: boolean; // Whether to use the cache
+    enableAIContext: boolean; // Whether to attach page context to AI translation
+    disableFloatingBall: boolean; // Whether the floating ball is disabled
+    floatingBallPosition: 'left' | 'right'; // Floating ball position
+    floatingBallHotkey: string; // Floating ball hotkey
+    customFloatingBallHotkey: string; // Custom floating ball hotkey
+    customHotkey: string; // Custom mouse hover hotkey
+    disableSelectionTranslator: boolean; // Whether selection translation is disabled
+    disableImageTranslator: boolean; // Whether image translation is disabled
+    deeplx: string; // DeepLX service address
+    selectionTranslatorMode: string; // Selection translation display mode: 'disabled' | 'bilingual' | 'translation-only'
+    selectionTranslatorTrigger: string; // Selection translation trigger: 'direct' | 'icon' | 'dot'
+    newApiUrl: string; // New API URL
+    maxConcurrentTranslations: number; // Maximum concurrent translations
+    youdaoAppKey: string; // Youdao App Key
+    youdaoAppSecret: string; // Youdao App Secret
+    tencentSecretId: string; // Tencent Cloud Secret ID
+    tencentSecretKey: string; // Tencent Cloud Secret Key
+    azureOpenaiEndpoint: string; // Azure OpenAI endpoint URL
+    animations: boolean; // Whether animations are enabled
+    inputBoxTranslationTrigger: string; // Input box translation trigger
+    inputBoxTranslationTarget: string; // Input box translation target language
+    deepseekApiType: DeepSeekApiType; // DeepSeek API format
+    deepseekThinkingMode: DeepSeekThinkingMode; // DeepSeek Chat Completion thinking mode
 
     constructor() {
         this.on = true;
@@ -79,11 +79,11 @@ export class Config {
         this.display = defaultOption.display;
         this.hotkey = defaultOption.hotkey;
         this.service = defaultOption.service;
-        this.videoTranslationEnabled = false; // Beta 功能默认关闭
-        this.videoService = services.microsoft; // 视频字幕默认使用微软翻译
+        this.videoTranslationEnabled = false; // Beta feature off by default
+        this.videoService = services.microsoft; // Video subtitles default to Microsoft Translator
         this.videoServiceDefaultMigrated = true;
-        this.videoSubtitleVisible = true; // 默认显示视频译文
-        this.videoSubtitleDisplayMode = 'bilingual'; // 默认双语显示
+        this.videoSubtitleVisible = true; // Show video subtitles by default
+        this.videoSubtitleDisplayMode = 'bilingual'; // Bilingual display by default
         this.token = {};
         this.requireApiKey = {};
         this.ak = '';
@@ -100,31 +100,31 @@ export class Config {
         this.system_role = systemRoleFactory();
         this.user_role = userRoleFactory();
         this.count = 0;
-        this.theme = 'auto';  // 默认跟随系统
-        this.useCache = true; // 默认开启缓存
-        this.enableAIContext = false; // 默认关闭 AI 智能上下文，避免意外增加请求体和费用
-        this.disableFloatingBall = true; // 默认关闭悬浮球
-        this.floatingBallPosition = 'right'; // 默认在右侧
-        this.floatingBallHotkey = 'Alt+T'; // 默认快捷键为 Alt+T
-        this.customFloatingBallHotkey = ''; // 自定义快捷键为空
-        this.customHotkey = ''; // 自定义鼠标悬浮快捷键为空
-        this.disableSelectionTranslator = true; // 默认关闭划词翻译
-        this.disableImageTranslator = true; // 默认关闭图片翻译，避免首次安装后扫描网页图片
-        this.deeplx = defaultOption.deeplx; // DeepLX 默认服务地址
-        this.selectionTranslatorMode = 'disabled'; // 默认关闭划词翻译
-        this.selectionTranslatorTrigger = 'icon'; // 默认显示可发现的操作图标
-        this.newApiUrl = 'http://localhost:3000'; // NewAPI 默认地址
-        this.maxConcurrentTranslations = 6; // 默认最大并发数为6
-        this.youdaoAppKey = ''; // 有道翻译 App Key
-        this.youdaoAppSecret = ''; // 有道翻译 App Secret
-        this.tencentSecretId = ''; // 腾讯云 Secret ID
-        this.tencentSecretKey = ''; // 腾讯云 Secret Key
-        this.azureOpenaiEndpoint = ''; // Azure OpenAI 端点地址
-        this.animations = true; // 默认启用动画
-        this.inputBoxTranslationTrigger = 'disabled'; // 默认关闭输入框翻译
-        this.inputBoxTranslationTarget = 'en'; // 默认翻译成英文
-        this.deepseekApiType = 'auto'; // DeepSeek 默认自动选择 API 格式
-        this.deepseekThinkingMode = 'disabled'; // 翻译默认关闭思考模式，降低延迟和输出噪音
+        this.theme = 'auto';  // Follow the system by default
+        this.useCache = true; // Cache enabled by default
+        this.enableAIContext = false; // AI context off by default to avoid extra request payloads and cost
+        this.disableFloatingBall = true; // Floating ball off by default
+        this.floatingBallPosition = 'right'; // Right side by default
+        this.floatingBallHotkey = 'Alt+T'; // Default hotkey is Alt+T
+        this.customFloatingBallHotkey = ''; // No custom hotkey
+        this.customHotkey = ''; // No custom mouse hover hotkey
+        this.disableSelectionTranslator = true; // Selection translation off by default
+        this.disableImageTranslator = true; // Image translation off by default to avoid scanning page images on first install
+        this.deeplx = defaultOption.deeplx; // DeepLX default service address
+        this.selectionTranslatorMode = 'disabled'; // Selection translation off by default
+        this.selectionTranslatorTrigger = 'icon'; // Show a discoverable action icon by default
+        this.newApiUrl = 'http://localhost:3000'; // New API default URL
+        this.maxConcurrentTranslations = 6; // Default maximum concurrency is 6
+        this.youdaoAppKey = ''; // Youdao App Key
+        this.youdaoAppSecret = ''; // Youdao App Secret
+        this.tencentSecretId = ''; // Tencent Cloud Secret ID
+        this.tencentSecretKey = ''; // Tencent Cloud Secret Key
+        this.azureOpenaiEndpoint = ''; // Azure OpenAI endpoint URL
+        this.animations = true; // Animations enabled by default
+        this.inputBoxTranslationTrigger = 'disabled'; // Input box translation off by default
+        this.inputBoxTranslationTarget = 'en'; // Default target language: English
+        this.deepseekApiType = 'auto'; // DeepSeek auto-selects the API format by default
+        this.deepseekThinkingMode = 'disabled'; // Thinking mode off for translations by default to reduce latency and output noise
     }
 }
 
@@ -194,20 +194,23 @@ const modelMigrations: Record<string, Record<string, string>> = {
 };
 
 /**
- * 将存储或导入的普通对象补齐为当前配置结构，并迁移已退役或错误的模型编号。
+ * Normalize a stored or imported plain object into the current config shape,
+ * migrating retired or incorrect model identifiers.
  */
 export function normalizeConfig(value: unknown): Config {
     const normalized = new Config();
-    // Vue 的响应式对象是 Proxy。Chrome 的 runtime 通道有时会替调用方
-    // 做隐式转换，但 Firefox 会严格按 structured clone 处理并直接抛出
-    // DataCloneError，所以配置边界必须先落成纯对象。
+    // Vue reactive objects are Proxies. Chrome's runtime channel sometimes
+    // performs implicit conversions on the caller's behalf, but Firefox strictly
+    // follows structured clone and throws DataCloneError, so config boundaries
+    // must first be flattened to plain objects.
     const source = value && typeof value === 'object'
         ? cloneConfigValue(value) as Partial<Config>
         : {};
     Object.assign(normalized, source);
     delete (normalized as unknown as Record<string, unknown>).translationStatus;
-    // __fluentConfigRevision 只用于 storage 的写入顺序判断，不能进入运行时
-    // 配置或历史快照，否则默认配置与同值的页面快照会因内部字段不同而无法去重。
+    // __fluentConfigRevision only tracks storage write ordering; it must not
+    // enter the runtime config or history snapshots, otherwise a default config
+    // and an equal page snapshot become impossible to deduplicate.
     delete (normalized as unknown as Record<string, unknown>).__fluentConfigRevision;
 
     normalized.model = isRecord(source.model) ? {...source.model} : {};
@@ -218,8 +221,9 @@ export function normalizeConfig(value: unknown): Config {
     if (typeof normalized.videoTranslationEnabled !== 'boolean') {
         normalized.videoTranslationEnabled = false;
     }
-    // 早期 Beta 版本曾把 DeepLX 写成默认值。只对没有迁移标记的旧配置
-    // 执行一次迁移，避免覆盖用户在新版本中主动选择的 DeepLX。
+    // Early Beta versions wrote DeepLX as the default. Migrate only legacy
+    // configs without the migration marker, to avoid overriding a DeepLX the
+    // user deliberately chose in a newer version.
     const shouldMigrateLegacyVideoDefault = source.videoService === services.deeplx
         && source.videoServiceDefaultMigrated !== true;
     const supportsVideoService = servicesType.machine.has(normalized.videoService)
@@ -237,7 +241,8 @@ export function normalizeConfig(value: unknown): Config {
 
     migrateModelIdentifiers(normalized.model);
 
-    // 旧配置可能没有保存过模型选择；为所有 AI 服务补齐各自的默认模型。
+    // Legacy configs may lack saved model selections; fill in each AI service's
+    // default model.
     defaultModels.forEach((defaultModel, service) => {
         if (!normalized.model[service]) normalized.model[service] = defaultModel;
     });
@@ -249,11 +254,13 @@ export function normalizeConfig(value: unknown): Config {
         normalized.model[services.deepseek] = currentModelIds.deepseek;
         normalized.deepseekThinkingMode = 'disabled';
     } else if (selectedModel === 'deepseek-reasoner') {
-        // 官方迁移指南要求 reasoner 使用 v4-flash 并显式开启 thinking。
+        // The official migration guide requires reasoner to use v4-flash with
+        // thinking explicitly enabled.
         normalized.model[services.deepseek] = currentModelIds.deepseek;
         normalized.deepseekThinkingMode = 'enabled';
     } else if (configuredThinkingMode !== 'enabled' && configuredThinkingMode !== 'disabled') {
-        // 兼容 #219 的早期配置：该实现把 v4-pro 作为默认思考模型。
+        // Compatible with early config from #219, which used v4-pro as the
+        // default thinking model.
         normalized.deepseekThinkingMode = selectedModel === 'deepseek-v4-pro' ? 'enabled' : 'disabled';
     }
 
@@ -290,8 +297,9 @@ function migrateModelIdentifiers(configuredModels: IMapping): void {
 }
 
 /**
- * 将单个官方预设的旧编号映射到当前编号，供配置加载与请求模板共同兜底。
- * 自定义模型应由调用方跳过此函数，以免改写私有部署别名。
+ * Map a single legacy official preset ID to its current ID, as a shared fallback
+ * for config loading and request templates. Callers should skip this function
+ * for custom models so private deployment aliases are never rewritten.
  */
 export function migrateModelIdentifier(service: string, selectedModel: string): string {
     return modelMigrations[service]?.[selectedModel] || selectedModel;
@@ -308,14 +316,14 @@ function isBooleanMapping(value: unknown): value is Record<string, boolean> {
         && Object.values(value).every((item) => typeof item === 'boolean');
 }
 
-// 构建所有服务的 system_role
+// Build system_role for every service
 function systemRoleFactory(): IMapping {
     let systems_role: IMapping = {};
     Object.keys(services).forEach(key => systems_role[key] = defaultOption.system_role);
     return systems_role;
 }
 
-// 构建所有服务的 user_role
+// Build user_role for every service
 function userRoleFactory(): IMapping {
     let users_role: IMapping = {};
     Object.keys(services).forEach(key => users_role[key] = defaultOption.user_role);

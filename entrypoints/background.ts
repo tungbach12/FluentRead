@@ -37,7 +37,7 @@ async function translateWithMicrosoftInBackground(text: string, targetLang: stri
     const translations = await translateMicrosoftTexts([text], '', targetLang);
     const translatedText = translations[0];
     if (translatedText === undefined) {
-        throw new Error('微软翻译未返回译文');
+        throw new Error('Microsoft Translator returned no translation');
     }
     return translatedText;
 }
@@ -81,7 +81,7 @@ async function assertImageOcrLanguagesDownloaded(sourceLanguage: string): Promis
 
     const labels = new Map(IMAGE_OCR_LANGUAGE_PACKS.map(pack => [pack.code, pack.label]));
     const missingLabels = missing.map(language => labels.get(language) || language).join('、');
-    throw new Error(`图片文字识别需要先下载${missingLabels}语言包，请前往设置 > 图片翻译下载`);
+    throw new Error(`Image OCR requires the ${missingLabels} language pack. Download it in Settings > Image translation.`);
 }
 
 type CacheRequestMode = 'single' | 'batch';
@@ -94,13 +94,13 @@ async function fetchImageForOcr(source: string): Promise<string> {
     const url = normalizeRemoteImageUrl(source);
     const response = await fetch(url, { credentials: 'omit', redirect: 'follow' });
     if (!response.ok) {
-        throw new Error(`图片服务器返回 ${response.status}`);
+        throw new Error(`Image server returned ${response.status}`);
     }
 
     const contentType = response.headers.get('content-type') || '';
     const contentLength = Number(response.headers.get('content-length') || 0);
     if (contentLength > MAX_REMOTE_IMAGE_BYTES) {
-        throw new Error('图片文件过大');
+        throw new Error('Image file is too large');
     }
 
     const buffer = await response.arrayBuffer();
@@ -167,7 +167,7 @@ function isCacheableResult(origin: string, result: unknown): result is string {
 function getTranslationService(serviceName = config.service) {
     const service = _service[serviceName];
     if (!service) {
-        throw new Error(`未找到翻译服务适配器: ${serviceName}`);
+        throw new Error(`No translation service adapter found: ${serviceName}`);
     }
     return service;
 }
@@ -313,7 +313,7 @@ async function translateBatchWithCache(
     const service = message.serviceOverride || config.service;
     if (!useCache) {
         const result = await getTranslationService(service)({...message, context, pageContext});
-        if (!Array.isArray(result)) throw new Error('批量翻译返回格式异常');
+        if (!Array.isArray(result)) throw new Error('Batch translation returned an unexpected format');
         return result as string[];
     }
 
@@ -352,7 +352,7 @@ async function translateBatchWithCache(
             origin: uniqueMissingOrigins,
         });
         if (!Array.isArray(translated) || translated.length !== uniqueMissingOrigins.length) {
-            throw new Error('批量翻译返回数量异常');
+            throw new Error('Batch translation returned an unexpected item count');
         }
 
         const result = [...cached] as Array<string | null>;
@@ -392,7 +392,7 @@ async function translateWithCache(message: TranslationRequestMessage): Promise<s
     const missingCredentialMessage = getMissingCredentialMessage(selectedService, config);
     if (missingCredentialMessage) throw new Error(missingCredentialMessage);
     if (serviceOverride && !servicesType.machine.has(serviceOverride) && !servicesType.isAI(serviceOverride)) {
-        throw new Error('视频字幕翻译服务不可用，请在设置中选择已配置的机器翻译或 AI 服务');
+        throw new Error('Video subtitle translation service is unavailable. Please choose a configured machine or AI translation service in Settings.');
     }
     const context = typeof message.context === 'string' ? message.context : '';
     const rawPageContext = typeof message.pageContext === 'string' ? message.pageContext : '';
@@ -451,7 +451,7 @@ export default defineBackground({
                 // 创建全文翻译子菜单
                 browser.contextMenus.create({
                     id: CONTEXT_MENU_IDS.TRANSLATE_FULL_PAGE,
-                    title: '全文翻译',
+                    title: 'Translate page',
                     parentId: 'fluentread-parent',
                     contexts: ['page', 'selection'],
                 });
@@ -459,7 +459,7 @@ export default defineBackground({
                 // 创建撤销翻译子菜单
                 browser.contextMenus.create({
                     id: CONTEXT_MENU_IDS.RESTORE_ORIGINAL,
-                    title: '撤销翻译',
+                    title: 'Undo translation',
                     parentId: 'fluentread-parent',
                     contexts: ['page', 'selection'],
                     enabled: false, // 初始状态为禁用
@@ -484,12 +484,12 @@ export default defineBackground({
                 await Promise.all([
                     browser.contextMenus.update(CONTEXT_MENU_IDS.TRANSLATE_FULL_PAGE, {
                         enabled: !isTranslated,
-                        title: isTranslated ? '全文翻译 (已翻译)' : '全文翻译'
+                        title: isTranslated ? 'Translate page (translated)' : 'Translate page'
                     }),
                     // 更新撤销翻译菜单项
                     browser.contextMenus.update(CONTEXT_MENU_IDS.RESTORE_ORIGINAL, {
                         enabled: isTranslated,
-                        title: isTranslated ? '撤销翻译' : '撤销翻译 (无翻译)'
+                        title: isTranslated ? 'Undo translation' : 'Undo translation (no translation)'
                     })
                 ]);
             } catch (error) {
@@ -596,7 +596,7 @@ export default defineBackground({
                             ? message.action
                             : null;
                         if (!action) {
-                            resolve({success: false, error: '无效的配置历史操作'});
+                            resolve({success: false, error: 'Invalid config history operation'});
                             return;
                         }
                         const history = await applyConfigHistoryAction(action, typeof message.version === 'number' ? message.version : undefined);

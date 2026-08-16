@@ -3,21 +3,21 @@ import {h} from "vue";
 import {throttle} from "@/entrypoints/utils/common";
 
 function isCredentialMessage(message: string): boolean {
-    return /API Key|访问令牌/.test(message);
+    return /API Key|access token/i.test(message);
 }
 
 function getNoticeTitle(type: 'error' | 'success', credential: boolean): string {
-    if (credential) return '配置提醒';
-    return type === 'success' ? '操作完成' : '翻译提醒';
+    if (credential) return 'Configuration reminder';
+    return type === 'success' ? 'Completed' : 'Translation reminder';
 }
 
 function getNoticeDetail(message: string, credential: boolean): string {
     if (!credential) return message;
 
-    const service = message.match(/^(.+?) 需要 API Key/)?.[1];
+    const service = message.match(/^(.+?) requires an API Key/)?.[1];
     return service
-        ? `还差一步：为 ${service} 填写 API Key，就可以开始翻译了。`
-        : '还差一步：填写 API Key，就可以继续翻译了。';
+        ? `Last step: enter the API Key for ${service} and you can start translating.`
+        : 'Almost there: enter the API Key and you can keep translating.';
 }
 
 function createNoticeContent(message: string, type: 'error' | 'success', credential: boolean) {
