@@ -79,8 +79,8 @@ export class Config {
         this.display = defaultOption.display;
         this.hotkey = defaultOption.hotkey;
         this.service = defaultOption.service;
-        this.videoTranslationEnabled = false; // Beta feature off by default
-        this.videoService = services.microsoft; // Video subtitles default to Microsoft Translator
+        this.videoTranslationEnabled = true; // YouTube subtitle translation on by default
+        this.videoService = services.custom; // Video subtitles use the same 9Router custom service
         this.videoServiceDefaultMigrated = true;
         this.videoSubtitleVisible = true; // Show video subtitles by default
         this.videoSubtitleDisplayMode = 'bilingual'; // Bilingual display by default

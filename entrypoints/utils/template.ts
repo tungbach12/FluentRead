@@ -57,6 +57,7 @@ export function commonMsgTemplate(origin: string, context?: string, prompt?: str
 
     const payload: any = {
         'model': model,
+        'stream': false,
         'messages': [
             {'role': 'system', 'content': system},
             {'role': 'user', 'content': user},
